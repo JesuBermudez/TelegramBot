@@ -4,7 +4,7 @@ import { start, help, all } from "./commands/primary.js";
 import alias from "./commands/alias.js";
 import createdCommands from "./commands/createdCommands.js";
 
-const bot = new Telegraf('6780284659:AAHwr5iSfILopOiPTL5rHFWq5wTxdFnHcbU');
+const bot = new Telegraf(process.env.token);
 
 const comandList = new CommandList();
 
