@@ -2,7 +2,8 @@ import Command from "./command.js"
 
 export default class CommandList {
     constructor() {
-        this.list = [new Command("start", ""), new Command("help", ""), new Command("all", "")]
+        this.reserved = ["/start", "/help", "/all", "/purge"]
+        this.list = [new Command("start", ""), new Command("help", ""), new Command("all", ""), new Command("purge", "")]
     }
 
     setList(newList) {

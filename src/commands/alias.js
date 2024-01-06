@@ -1,6 +1,7 @@
 export default function alias(ctx, comandList) {
     const message = ctx.update.message;
     const cmd = message.text.trim().split(" ");
+
     
     if (cmd.length < 2) {
         // message hasn't a command name

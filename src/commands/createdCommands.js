@@ -1,14 +1,12 @@
 export default function createdCommands(ctx, commandList) {
+    if (!ctx.update.message.text) return
+    
     const message = ctx.update.message
     const cmd = message.text.trim().split(" ")[0]
 
     // message has a command
-    if (cmd.startsWith('/') &&
-        cmd.length > 1 &&
-        cmd != "/start" &&
-        cmd != "/help" &&
-        cmd != "/all") {
-
+    if (cmd.startsWith('/') && cmd.length > 1 && !commandList.reserved.includes(cmd)) {
+        
         // search the command
         const command = commandList.findCommand(cmd.substring(1));
 
