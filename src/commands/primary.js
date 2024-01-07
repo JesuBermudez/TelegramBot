@@ -7,5 +7,5 @@ export function help(ctx) {
 }
 
 export function all(ctx) {
-    ctx.reply("@kendricita, @Midudevx, @Https_Dev03, @El_Bermudez, @ManuelLegro, @Kespinal, @perralta")
+    ctx.reply("@kendricita, @Midudevx, @Https_Dev03, @El_Bermudez, @ManuelLegro, @Kespinal, @perralta, @Wilcar03")
 }

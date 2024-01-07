@@ -1,7 +1,6 @@
 export default function purge(ctx, bot) {
   // main message id
   const lastId = ctx.update.message.message_id;
-  // chat id
   const chatId = ctx.update.message.chat.id;
 
   // if isn't replying to another message
