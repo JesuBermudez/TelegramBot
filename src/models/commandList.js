@@ -12,20 +12,20 @@ export default class CommandList {
 
   addChat(chatId) {
     this.list[chatId] = [
-      new Command("start", " "),
-      new Command("help", " "),
-      new Command("all", " "),
-      new Command("purge", " ")
+      new Command("text", "start", " "),
+      new Command("text", "help", " "),
+      new Command("text", "all", " "),
+      new Command("any", "purge", " ")
     ];
   }
 
-  addCommand(chatId, name, command, description = " ") {
-    this.list[chatId].push(this.createCommand(name, command, description));
+  addCommand(chatId, type, name, command, description = " ") {
+    this.list[chatId].push(this.createCommand(type, name, command, description));
     return "added";
   }
 
-  createCommand(name, command, description = " ") {
-    return new Command(name, command, description);
+  createCommand(type, name, command, description = " ") {
+    return new Command(type, name, command, description);
   }
 
   removeCommand(chatId, name) {

@@ -25,7 +25,7 @@ bot.command('remove', (ctx) => remove(ctx, bot, comandList))
 
 bot.command('purge', (ctx) => purge(ctx, bot))
 
-bot.on('message', (ctx) => createdCommands(ctx, comandList))
+bot.on('message', (ctx) => createdCommands(ctx, bot, comandList))
 
 
 bot.launch();

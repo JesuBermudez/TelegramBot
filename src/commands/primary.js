@@ -7,5 +7,5 @@ export function help(ctx) {
 }
 
 export function all(ctx) {
-    ctx.reply("@kendricita, @Midudevx, @Https_Dev03, @El_Bermudez, @ManuelLegro, @Kespinal, @perralta, @Wilcar03")
+    ctx.reply("@kendricita, @Midudevx, @Https_Dev03, @El_Bermudez, @ManuelLegro, @Kespinal, @perralta, @Wilcar03", { reply_to_message_id: ctx.update.message.message_id })
 }

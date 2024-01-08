@@ -1,5 +1,6 @@
 export default class Command {
-    constructor(name, command, description) {
+    constructor(type, name, command, description) {
+        this.type = type
         this.name = name
         this.command = command
         this.description = description
