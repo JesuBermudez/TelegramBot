@@ -8,27 +8,25 @@ import purge from "./commands/purge.js";
 import laughter from "./commands/laughter.js";
 import createdCommands from "./commands/createdCommands.js";
 
-
 const bot = new Telegraf(process.env.token);
-
 const comandList = new CommandList();
 
-
+// todo: functions
 bot.start((ctx) => start(ctx))
-
 bot.help((ctx) => help(ctx, comandList))
-
-bot.command('all', (ctx) => all(ctx))
-
-bot.command('alias', (ctx) => alias(ctx, comandList))
-
-bot.command('remove', (ctx) => remove(ctx, bot, comandList))
-
-bot.command('purge', (ctx) => purge(ctx, bot))
-
-bot.command('risa', (ctx) => laughter(ctx, bot))
-
 bot.on('message', (ctx) => createdCommands(ctx, bot, comandList))
 
+// todo: response commands
+bot.command('all', (ctx) => all(ctx))
+bot.command('alias', (ctx) => alias(ctx, comandList))
+bot.command('remove', (ctx) => remove(ctx, bot, comandList))
+bot.command('purge', (ctx) => purge(ctx, bot))
+bot.command('risa', (ctx) => laughter(ctx, bot))
 
-bot.launch();
+
+bot.launch({
+    webhook: {
+        domain: process.env.DOMAIN,
+        port: process.env.PORT
+    }
+});
