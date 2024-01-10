@@ -21,9 +21,7 @@ export function help(ctx, commandList) {
             ? ""
             : spaceString[spaceString.length - item.name.length];
         // command structure
-        return `    *${i - 6}*\\. \\(${item.type}\\) */${item.name}* ${sp}\\- \`${
-          item.description
-        }\`\n`;
+        return "    *" + (i - 6) + "*\\. \\(" + item.type + "\\) */" + item.name + "* " + sp + "\\- \`" + item.description + "\`\n";
       })
       .join("");
   }

@@ -48,11 +48,10 @@ function textCommand(ctx, command, reply = false) {
   // checking if is replying to another message
   if (reply) {
     ctx.reply(command.command, {
-      parse_mode: "MarkdownV2",
       reply_to_message_id: ctx.update.message.reply_to_message.message_id,
     });
   } else {
-    ctx.reply(command.command, { parse_mode: "MarkdownV2" });
+    ctx.reply(command.command);
   }
 }
 
