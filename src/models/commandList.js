@@ -15,7 +15,10 @@ export default class CommandList {
       new Command("text", "start", " "),
       new Command("text", "help", " "),
       new Command("text", "all", " "),
-      new Command("any", "purge", " ")
+      new Command("any", "purge", " "),
+      new Command("text", "alias", " "),
+      new Command("text", "remove", " "),
+      new Command("text", "risa", " "),
     ];
   }
 

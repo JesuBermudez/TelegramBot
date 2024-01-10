@@ -17,10 +17,10 @@ export default function purge(ctx, bot) {
     .getChatMember(chatId, ctx.update.message.from.id)
     .then((chatMember) => {
       // if is not
-      if (chatMember.status != "administrator") {
+      if (!["administrator", "creator"].includes(chatMember.status)) {
         ctx.reply("⚠ Solo *Administradores*", {
-            parse_mode: "MarkdownV2",
-            reply_to_message_id: lastId,
+          parse_mode: "MarkdownV2",
+          reply_to_message_id: lastId,
         });
         return;
       }
@@ -52,13 +52,17 @@ export default function purge(ctx, bot) {
         bot.telegram.deleteMessage(chatId, lastId);
 
         // delete by id
-        for (let i = firstId; i < lastId; i++) {
-          try {
-            bot.telegram.deleteMessage(chatId, i);
-          } catch (error) {
-            console.log(error);
-          }
-        }
+        deleteMessages(bot, chatId, firstId, lastId)
       });
     });
+}
+
+async function deleteMessages(bot, chatId, firstId, lastId) {
+  for (let i = firstId; i < lastId; i++) {
+    try {
+      await bot.telegram.deleteMessage(chatId, i);
+    } catch (err) {
+      console.log(`No se pudo eliminar el mensaje con el ID ${i}: ${err}`);
+    }
+  }
 }

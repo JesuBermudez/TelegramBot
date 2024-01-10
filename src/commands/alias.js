@@ -47,7 +47,7 @@ export default function alias(ctx, commandList) {
       chatId,
       payload[0],
       message.reply_to_message.text,
-      payload[1]
+      payload.slice(1).join(" ")
     );
   } else if (message.reply_to_message.hasOwnProperty("sticker")) {
     // type stiker
@@ -57,7 +57,7 @@ export default function alias(ctx, commandList) {
       chatId,
       payload[0],
       message.reply_to_message.sticker.file_id,
-      payload[1]
+      payload.slice(1).join(" ")
     )
   }
 }
