@@ -21,7 +21,7 @@ export function help(ctx, commandList) {
             ? ""
             : spaceString[spaceString.length - item.name.length];
         // command structure
-        return `    ${i - 6}\\. \\(${item.type}\\) */${item.name}* ${sp}\\- \`${
+        return `    *${i - 6}*\\. \\(${item.type}\\) */${item.name}* ${sp}\\- \`${
           item.description
         }\`\n`;
       })
@@ -30,15 +30,15 @@ export function help(ctx, commandList) {
 
   ctx.reply(
     "🚀 *Comandos* actuales:\n\n" +
-      "   1\\. */help*   \\- Muestra la lista de comandos\\.\n" +
-      "   2\\. */all*      \\- Menciona a todos los integrantes\\.\n" +
-      "   3\\. */purge*  \\- Borra mensajes\\. \\(Administradores\\)\n" +
+      "   *1*\\. */help*   \\- Muestra la lista de comandos\\.\n" +
+      "   *2*\\. */all*      \\- Menciona a todos los integrantes\\.\n" +
+      "   *3*\\. */purge*  \\- Borra mensajes\\. \\(Administradores\\)\n" +
       "__Uso__: \\- Responder a al mensaje desde donde se quiera empezar a borrar\n    \\- Usar el comando en la respuesta del mensaje\n\n" +
-      "   4\\. */alias*   \\- Crea comandos\\.\n" +
+      "   *4*\\. */alias*   \\- Crea comandos\\.\n" +
       "__Uso__: \\- Responder al Mensaje o Stiker que se quiere guardar\n    \\- Responder con: `/alias nombre descripción` \\(nombre sin espacios\\)\n\n" +
-      "   5\\. */remove* \\- Elimina un comando\\.\n" +
+      "   *5*\\. */remove* \\- Elimina un comando\\.\n" +
       "__Uso__: `/remove nombre`\n\n" +
-      "   6\\. */risa*   \\- Envia un mesaje junto con risas\\.\n" +
+      "   *6*\\. */risa*   \\- Envia un mesaje junto con risas\\.\n" +
       "__Uso__: \\- `/risa numero_de_letras mensaje_extra` \\(respondiendo o no a un mensaje\\)\n\n" +
       "🔹 *Comandos creados*:\n" +
       commList,
