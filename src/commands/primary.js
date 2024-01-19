@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export function start(ctx) {
   ctx.reply(
     "Este es el bot de *TeamCoder's*💻 🚀\n\n" +
@@ -6,12 +8,27 @@ export function start(ctx) {
   );
 }
 
-export function help(ctx, commandList) {
-  let commList = "    \\(Ninguno aún\\)";
+export async function help(ctx, commandList) {
+  // string final
+  let result = "    \\(Ninguno aún\\)";
+  // api response
+  let response = ""
+  // array of commands
+  let commArray = []
 
-  if (commandList.checkChatId(ctx.update.message.chat.id)) {
-    // make a list of the created commands
-    commList = commandList.list[ctx.update.message.chat.id]
+  // make the api request
+  try {
+    response = await axios.get(process.env.API + "/chat/" + ctx.update.message.chat.id)
+    commArray = response.data.chat.list
+  } catch (error) {
+    response = "chat not found"
+  }
+
+  if (response == "chat not found") return
+  
+  // make a list of the created commands
+  if (commArray.length > 7) {
+    result = commArray
       .map((item, i) => {
         // the seven first commands are skiped
         if (i < 7) return "";
@@ -25,6 +42,7 @@ export function help(ctx, commandList) {
       })
       .join("");
   }
+  
 
   ctx.reply(
     "🚀 *Comandos* actuales:\n\n" +
@@ -39,14 +57,38 @@ export function help(ctx, commandList) {
       "   *6*\\. */risa*   \\- Envia un mesaje junto con risas\\.\n" +
       "__Uso__: \\- `/risa numero_de_letras mensaje_extra` \\(respondiendo o no a un mensaje\\)\n\n" +
       "🔹 *Comandos creados*:\n" +
-      commList,
+      result,
     { parse_mode: "MarkdownV2" }
   );
 }
 
-export function all(ctx) {
+export async function all(ctx) {
+  // api response
+  let response = ""
+  // array of commands
+  let commArray = []
+
+  // make the api request
+  try {
+    response = await axios.get(process.env.API + "/chat/" + ctx.update.message.chat.id)
+    commArray = response.data.chat.list
+  } catch (error) {
+    response = "chat not found"
+  }
+
+  if (response == "chat not found") return
+  
+  // find "all" command
+  const allCommand = commArray.find((item) => item.name == "all")
+
+  // if is not finded
+  if (allCommand == undefined) return
+
+  // if is empty
+  if (allCommand.command.trim().length < 1) return
+
   ctx.reply(
-    "@kendricita, @Midudevx, @Https_Dev03, @El_Bermudez, @ManuelLegro, @Kespinal, @perralta, @Wilcar03",
+    allCommand.command,
     { reply_to_message_id: ctx.update.message.message_id }
   );
 }

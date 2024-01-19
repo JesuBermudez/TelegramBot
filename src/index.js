@@ -26,8 +26,8 @@ bot.on('message', (ctx) => createdCommands(ctx, bot, comandList))
 
 
 bot.launch({
-    webhook: {
+    /*webhook: {
         domain: process.env.DOMAIN,
         port: process.env.PORT
-    }
+    }*/
 });

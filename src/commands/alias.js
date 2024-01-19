@@ -1,9 +1,13 @@
-export default function alias(ctx, commandList) {
+import axios from "axios";
+
+export default async function alias(ctx, commandList) {
   // message object
   const message = ctx.update.message;
   // text after the command
   const payload = ctx.payload.trim().split(" ");
   const chatId = message.chat.id;
+  // api response
+  let response = ""
 
 
   if (payload[0].length < 1) {
@@ -24,58 +28,43 @@ export default function alias(ctx, commandList) {
     return;
   }
 
-  // does the chat already have a command prompt?
-  if (!commandList.checkChatId(chatId)) {
-    commandList.addChat(chatId);
-  }
 
   // Verify that the command doesn't exist
-  if (commandList.findCommand(chatId, payload[0]) != "command doesn't exist") {
+  /*
     ctx.reply("⚠️ *El comando esta reservado, intenta con otro nombre\\.*", {
       parse_mode: "MarkdownV2",
       reply_to_message_id: message.message_id,
     });
     return;
-  }
+  */
+
+  // get type and command
+  const command = commandType(message)
 
   // add the command
+    try {
+      response = await axios.post(process.env.API + "/command/" + chatId, {
+        type: command.type,
+        name: payload[0],
+        command: command.command,
+        description: payload.slice(1).join(" "),
+        creator: message.from.username 
+      })
+
+      ctx.reply("✨ *El comando ha sido creado\\!*", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: ctx.update.message.message_id,
+      });
+    } catch (error) {
+      console.log(error.response.data)
+    }
+}
+
+
+function commandType(message) {
   if (message.reply_to_message.hasOwnProperty("text")) {
-    // type text
-    textCommand(
-      ctx,
-      commandList,
-      chatId,
-      payload[0],
-      message.reply_to_message.text,
-      payload.slice(1).join(" ")
-    );
+    return {type: "text", command: message.reply_to_message.text}
   } else if (message.reply_to_message.hasOwnProperty("sticker")) {
-    // type stiker
-    stickerCommand(
-      ctx,
-      commandList,
-      chatId,
-      payload[0],
-      message.reply_to_message.sticker.file_id,
-      payload.slice(1).join(" ")
-    )
+    return {type: "sticker", command: message.reply_to_message.sticker.file_id}
   }
-}
-
-function textCommand(ctx, commandList, chatId, name, command, description) {
-  commandList.addCommand(chatId, "text", name, command, description);
-
-  ctx.reply("✨ *El comando ha sido creado\\!*", {
-    parse_mode: "MarkdownV2",
-    reply_to_message_id: ctx.update.message.message_id,
-  });
-}
-
-function stickerCommand(ctx, commandList, chatId, name, stikerId, description) {
-  commandList.addCommand(chatId, "sticker", name, stikerId, description);
-
-  ctx.reply("✨ *El comando ha sido creado\\!*", {
-    parse_mode: "MarkdownV2",
-    reply_to_message_id: ctx.update.message.message_id,
-  });
 }
