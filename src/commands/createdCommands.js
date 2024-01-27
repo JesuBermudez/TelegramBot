@@ -1,27 +1,31 @@
-export default function createdCommands(ctx, bot, commandList) {
+import axios from "axios";
+
+export default async function createdCommands(ctx, bot) {
   // if there is no message text
   if (!ctx.update.message.text) return;
 
-  // message object
-  const message = ctx.update.message;
-  // only the command (string)
-  const cmd = message.text.trim().split(" ")[0];
+  const message = ctx.update.message; // message object
+  const commandString = message.text.trim().split(" ")[0]; // only the command (string)
   const chatId = message.chat.id;
+  let response = {}; // api response
+  let command = {}; // command from the api
 
   // message has a command
-  if (
-    cmd.startsWith("/") &&
-    cmd.length > 1 &&
-    !commandList.reserved.includes(cmd)
-  ) {
-    // there is no commands
-    if (!commandList.checkChatId(chatId)) return;
+  if (commandString.startsWith("/") && commandString.length > 1) {
+    // api request
+    try {
+      response = await axios.get(
+        `${process.env.API}/command/${chatId}/` +
+          commandString.substring(1, commandString.length)
+      );
 
-    // search the command
-    const command = commandList.findCommand(chatId, cmd.substring(1));
+      command = response.data.command;
+    } catch (error) {
+      response = "command not found";
+    }
 
     // if found
-    if (command != "command doesn't exist") {
+    if (response != "command not found") {
       switch (command.type) {
         case "text":
           textCommand(ctx, command, message.hasOwnProperty("reply_to_message"));

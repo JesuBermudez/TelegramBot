@@ -8,24 +8,24 @@ export function start(ctx) {
   );
 }
 
-export async function help(ctx, commandList) {
+export async function help(ctx) {
   // string final
   let result = "    \\(Ninguno aún\\)";
   // api response
-  let response = ""
+  let response = "";
   // array of commands
-  let commArray = []
+  let commArray = [];
 
   // make the api request
   try {
-    response = await axios.get(process.env.API + "/chat/" + ctx.update.message.chat.id)
-    commArray = response.data.chat.list
+    response = await axios.get(
+      process.env.API + "/chat/" + ctx.update.message.chat.id
+    );
+    commArray = response.data.chat.list;
   } catch (error) {
-    response = "chat not found"
+    response = "chat not found";
   }
 
-  if (response == "chat not found") return
-  
   // make a list of the created commands
   if (commArray.length > 7) {
     result = commArray
@@ -38,11 +38,16 @@ export async function help(ctx, commandList) {
             ? ""
             : spaceString[spaceString.length - item.name.length];
         // command structure
-        return "    *" + (i - 6) + "*\\. \\(" + item.type + "\\) */" + item.name + "* " + sp + "\\- \`" + item.description + "\`\n";
+        return (
+          `    *${i - 6}*\\. \\(${item.type}\\) */` +
+          item.name +
+          `* ${sp}\\- \`` +
+          item.description +
+          "`\n"
+        );
       })
       .join("");
   }
-  
 
   ctx.reply(
     "🚀 *Comandos* actuales:\n\n" +
@@ -56,6 +61,8 @@ export async function help(ctx, commandList) {
       "__Uso__: `/remove nombre`\n\n" +
       "   *6*\\. */risa*   \\- Envia un mesaje junto con risas\\.\n" +
       "__Uso__: \\- `/risa numero_de_letras mensaje_extra` \\(respondiendo o no a un mensaje\\)\n\n" +
+      "   *7*\\. */tr*   \\- Traduce oraciones\\.\n" +
+      "__Uso__: \\- `/tr oracion`\n\n" +
       "🔹 *Comandos creados*:\n" +
       result,
     { parse_mode: "MarkdownV2" }
@@ -63,34 +70,28 @@ export async function help(ctx, commandList) {
 }
 
 export async function all(ctx) {
-  // api response
-  let response = ""
-  // array of commands
-  let commArray = []
+  let response = ""; // api response
+  let command = {}; // the "all" command
 
   // make the api request
   try {
-    response = await axios.get(process.env.API + "/chat/" + ctx.update.message.chat.id)
-    commArray = response.data.chat.list
+    response = await axios.get(
+      `${process.env.API}/command/${ctx.update.message.chat.id}/all`
+    );
+    command = response.response.data.command;
   } catch (error) {
-    response = "chat not found"
+    response = "command not found";
   }
 
-  if (response == "chat not found") return
-  
-  // find "all" command
-  const allCommand = commArray.find((item) => item.name == "all")
-
-  // if is not finded
-  if (allCommand == undefined) return
+  // if command not found
+  if (response == "command not found") return;
 
   // if is empty
-  if (allCommand.command.trim().length < 1) return
+  if (command.command.trim().length < 1) return;
 
-  ctx.reply(
-    allCommand.command,
-    { reply_to_message_id: ctx.update.message.message_id }
-  );
+  ctx.reply(command.command, {
+    reply_to_message_id: ctx.update.message.message_id,
+  });
 }
 
 const spaceString = [

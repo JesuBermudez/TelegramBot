@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.0",
     "axios": "^1.6.5",
     "dotenv": "^16.3.1",
     "telegraf": "^4.15.3"

@@ -1,14 +1,9 @@
 import axios from "axios";
 
-export default async function alias(ctx, commandList) {
-  // message object
-  const message = ctx.update.message;
-  // text after the command
-  const payload = ctx.payload.trim().split(" ");
+export default async function alias(ctx) {
+  const message = ctx.update.message; // message object
+  const payload = ctx.payload.trim().split(" "); // text after the command
   const chatId = message.chat.id;
-  // api response
-  let response = ""
-
 
   if (payload[0].length < 1) {
     // message hasn't a command name
@@ -28,43 +23,49 @@ export default async function alias(ctx, commandList) {
     return;
   }
 
-
-  // Verify that the command doesn't exist
-  /*
-    ctx.reply("⚠️ *El comando esta reservado, intenta con otro nombre\\.*", {
-      parse_mode: "MarkdownV2",
-      reply_to_message_id: message.message_id,
-    });
-    return;
-  */
-
   // get type and command
-  const command = commandType(message)
+  const command = commandType(message);
+
+  // if not text or sticker
+  if (command.type == "not available") return;
 
   // add the command
-    try {
-      response = await axios.post(process.env.API + "/command/" + chatId, {
-        type: command.type,
-        name: payload[0],
-        command: command.command,
-        description: payload.slice(1).join(" "),
-        creator: message.from.username 
-      })
+  try {
+    const response = await axios.post(process.env.API + "/command/" + chatId, {
+      type: command.type,
+      name: payload[0],
+      command: command.command,
+      description:
+        payload.slice(1).join(" ") || `Created by @${message.from.username}`,
+      creator: message.from.username,
+    });
 
+    if (response.data.message == "Command Created") {
       ctx.reply("✨ *El comando ha sido creado\\!*", {
         parse_mode: "MarkdownV2",
         reply_to_message_id: ctx.update.message.message_id,
       });
-    } catch (error) {
-      console.log(error.response.data)
     }
+  } catch (error) {
+    // error handling
+    if (error.response.data.error == "The command already exists") {
+      ctx.reply("⚠️ *El comando esta reservado, intenta con otro nombre\\.*", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: message.message_id,
+      });
+    }
+  }
 }
-
 
 function commandType(message) {
   if (message.reply_to_message.hasOwnProperty("text")) {
-    return {type: "text", command: message.reply_to_message.text}
+    return { type: "text", command: message.reply_to_message.text };
   } else if (message.reply_to_message.hasOwnProperty("sticker")) {
-    return {type: "sticker", command: message.reply_to_message.sticker.file_id}
+    return {
+      type: "sticker",
+      command: message.reply_to_message.sticker.file_id,
+    };
+  } else {
+    return { type: "not available", command: "" };
   }
 }
