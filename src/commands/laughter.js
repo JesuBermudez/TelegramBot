@@ -26,7 +26,7 @@ export default async function laughter(ctx, bot) {
 
   // if number of characters isn't indicated, but there is extra message
   if (rightText.length >= 1 && isNaN(rightText[0])) {
-    extra = rightText.slice(1).join(" ");
+    extra = rightText.join(" ");
   }
 
   const letters = ["J", "A", "S"];
