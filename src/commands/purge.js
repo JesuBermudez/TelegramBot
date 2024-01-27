@@ -2,15 +2,6 @@ export default async function purge(ctx, bot) {
   const lastId = ctx.update.message.message_id; // main message id
   const chatId = ctx.update.message.chat.id;
 
-  // if isn't replying to another message
-  if (!ctx.update.message.hasOwnProperty("reply_to_message")) {
-    ctx.reply("⚠ *Responde a algun mensaje*", {
-      parse_mode: "MarkdownV2",
-      reply_to_message_id: lastId,
-    });
-    return;
-  }
-
   // verify that the member is an admin
   const chatMember = await bot.telegram.getChatMember(
     chatId,
@@ -25,13 +16,21 @@ export default async function purge(ctx, bot) {
     });
     return;
   }
-
   // verify that the bot is admin
   const botMember = await bot.telegram.getChatMember(chatId, ctx.botInfo.id);
 
   // if is not
   if (botMember.status != "administrator") {
     ctx.reply("⚠ Aun no soy *Administrador*", {
+      parse_mode: "MarkdownV2",
+      reply_to_message_id: lastId,
+    });
+    return;
+  }
+
+  // if isn't replying to another message
+  if (!ctx.update.message.hasOwnProperty("reply_to_message")) {
+    ctx.reply("⚠ *Responde a algun mensaje*", {
       parse_mode: "MarkdownV2",
       reply_to_message_id: lastId,
     });

@@ -1,15 +1,15 @@
 import axios from "axios";
 
-export async function all(ctx) {
+export async function all(ctx, bot) {
+  const message = ctx.update.message; // message object
+  const chatId = message.chat.id;
   let response = ""; // api response
   let command = {}; // the "all" command
 
   // make the api request
   try {
-    response = await axios.get(
-      `${process.env.API}/command/${ctx.update.message.chat.id}/all`
-    );
-    command = response.response.data.command;
+    response = await axios.get(`${process.env.API}/command/${chatId}/all`);
+    command = response.data.command;
   } catch (error) {
     response = "command not found";
   }
@@ -20,15 +20,27 @@ export async function all(ctx) {
   // if is empty
   if (command.command.trim().length < 1) return;
 
-  ctx.reply(command.command, {
-    reply_to_message_id: ctx.update.message.message_id,
-  });
+  // if is replying to another message
+  if (message.hasOwnProperty("reply_to_message")) {
+    try {
+      await bot.telegram.deleteMessage(chatId, message.message_id);
+    } catch (error) {}
+
+    ctx.reply(command.command, {
+      reply_to_message_id: message.reply_to_message.message_id,
+    });
+  } else {
+    ctx.reply(command.command, {
+      reply_to_message_id: message.message_id,
+    });
+  }
 }
 
 export async function add(ctx) {
+  const message = ctx.update.message; // message object
+  const chatId = message.chat.id;
+  const username = message.from.username;
   let response = ""; // api response
-  const chatId = ctx.update.message.chat.id;
-  const username = ctx.update.message.from.username;
 
   try {
     response = await axios.put(
@@ -38,12 +50,11 @@ export async function add(ctx) {
     if (response.data.message == "username added") {
       ctx.reply("✨ *El usuario ha sido añadido\\!*", {
         parse_mode: "MarkdownV2",
-        reply_to_message_id: ctx.update.message.message_id,
+        reply_to_message_id: message.message_id,
       });
     }
   } catch (error) {
-    console.log(error);
-    if (error.response.data.error == "username not added") {
+    if (error.response.status == 304) {
       ctx.reply("⚠️ *Usuario ya existe\\.*", {
         parse_mode: "MarkdownV2",
         reply_to_message_id: message.message_id,

@@ -16,7 +16,7 @@ bot.start((ctx) => start(ctx));
 bot.help((ctx) => help(ctx, bot));
 
 // todo: response commands
-bot.command("all", (ctx) => all(ctx));
+bot.command("all", (ctx) => all(ctx, bot));
 bot.command("add", (ctx) => add(ctx));
 bot.command("alias", (ctx) => alias(ctx));
 bot.command("remove", (ctx) => remove(ctx, bot));
