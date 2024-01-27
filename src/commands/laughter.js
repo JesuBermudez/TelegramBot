@@ -19,12 +19,14 @@ export default async function laughter(ctx, bot) {
 
   // if number of characters indicated
   if (rightText[0] && !isNaN(rightText[0])) {
-    // number of letters
-    count = Math.abs(Math.floor(rightText[0]));
-    // extra message
-    extra = rightText.length > 1 ? rightText.slice(1).join(" ") : "";
-    // if it is too long
-    count = count < 1000 ? count : 999;
+    count = Math.abs(Math.floor(rightText[0])); // number of letters
+    count = count < 1000 ? count : 999; // if it is too long
+    extra = rightText.length > 1 ? rightText.slice(1).join(" ") : ""; // extra message
+  }
+
+  // if number of characters isn't indicated, but there is extra message
+  if (rightText.length >= 1 && isNaN(rightText[0])) {
+    extra = rightText.slice(1).join(" ");
   }
 
   const letters = ["J", "A", "S"];
