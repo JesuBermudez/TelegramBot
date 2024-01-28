@@ -41,14 +41,14 @@ export default async function remove(ctx, bot, commandList) {
         });
         break;
       case "chat not found":
-        ctx.reply("*Atención:* No hay comandos aún, trata creando alguno.", {
+        ctx.reply("⚠ *Atención:* No hay comandos aún, trata creando alguno.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
         });
         break;
 
       default:
-        ctx.reply("*Atención:* Comando no existe.", {
+        ctx.reply("⚠ *Atención:* Comando no existe.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
         });
