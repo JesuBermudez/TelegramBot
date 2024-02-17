@@ -12,11 +12,16 @@ export default async function createdCommands(ctx, bot) {
 
   // message has a command
   if (commandString.startsWith("/") && commandString.length > 1) {
+    // the name of the command without the "/" and replacing the "." with the encode URL version
+    const nameCommand = commandString
+      .substring(1, commandString.length)
+      .replace(/\./g, "%2E");
+
     // api request
     try {
       response = await axios.get(
         `${process.env.API}/command/${chatId}/` +
-          commandString.substring(1, commandString.length)
+          encodeURIComponent(nameCommand)
       );
 
       command = response.data.command;
