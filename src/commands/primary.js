@@ -37,18 +37,15 @@ export async function help(ctx, bot) {
             : spaceString[spaceString.length - item.name.length];
         // command structure
         return (
-          `    *${i - 7}*\\. \\(${item.type}\\) */` +
+          `    *${i - 7}*\\. \\(${item.type}\\) */\`` +
           item.name +
-          `* ${sp}\\- \`` +
+          `\`\n      \`` +
           item.description +
           "`\n"
         );
       })
       .join("");
   }
-
-  // replace all the "." with "\\."
-  result = result.replaceAll(/\./g, "\\.");
 
   bot.telegram.sendMessage(
     memberId,
