@@ -47,6 +47,9 @@ export async function help(ctx, bot) {
       .join("");
   }
 
+  // replace all the "." with "\\."
+  result = result.replaceAll(/\./g, "\\.");
+
   bot.telegram.sendMessage(
     memberId,
     "🚀 *Comandos* actuales:\n\n" +
