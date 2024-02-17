@@ -39,7 +39,7 @@ export async function help(ctx, bot) {
         return (
           `    *${i - 7}*\\. \\(${item.type}\\) */\`` +
           item.name +
-          `\`\n      \`` +
+          `\`*\n      \`` +
           item.description +
           "`\n"
         );
