@@ -30,11 +30,7 @@ export async function help(ctx, bot) {
       .map((item, i) => {
         // the seven first commands are skiped
         if (i < 8) return "";
-        // spacing between command and (-)
-        let sp =
-          item.name.length > 12
-            ? ""
-            : spaceString[spaceString.length - item.name.length];
+
         // command structure
         return (
           `    *${i - 7}*\\. \\(${item.type}\\) */*\`` +
@@ -67,17 +63,3 @@ export async function help(ctx, bot) {
     { parse_mode: "MarkdownV2" }
   );
 }
-
-const spaceString = [
-  "",
-  " ",
-  "   ",
-  "     ",
-  "       ",
-  "         ",
-  "           ",
-  "              ",
-  "                 ",
-  "                    ",
-  "                       ",
-];
