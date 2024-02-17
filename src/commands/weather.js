@@ -3,6 +3,8 @@ import axios from "axios";
 export default async function weather(ctx) {
   let response = {};
 
+  return;
+
   // make the request to the api
   try {
     const { data } = await axios.get(

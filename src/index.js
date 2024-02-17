@@ -29,8 +29,8 @@ bot.command("clima", (ctx) => weather(ctx));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  /* webhook: {
+  webhook: {
     domain: process.env.DOMAIN,
     port: process.env.PORT,
-  }, */
+  },
 });
