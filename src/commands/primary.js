@@ -37,9 +37,9 @@ export async function help(ctx, bot) {
             : spaceString[spaceString.length - item.name.length];
         // command structure
         return (
-          `    *${i - 7}*\\. \\(${item.type}\\) */\`` +
+          `    *${i - 7}*\\. \\(${item.type}\\) */*\`` +
           item.name +
-          `\`*\n      \`` +
+          `\`\n      \`` +
           item.description +
           "`\n"
         );
