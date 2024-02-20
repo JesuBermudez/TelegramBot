@@ -1,8 +1,9 @@
 import axios from "axios";
 
-export default async function remove(ctx, bot, commandList) {
+export default async function remove(ctx, bot) {
   const messageId = ctx.update.message.message_id;
   const chatId = ctx.update.message.chat.id;
+  const user = ctx.update.message.from.username;
   const payload = ctx.payload.trim().split(" "); // array of text (where should be the command)
   let response = {}; // api response
 
@@ -16,16 +17,29 @@ export default async function remove(ctx, bot, commandList) {
   }
 
   // verify that the member is an admin
-  const member = bot.telegram.getChatMember(chatId, ctx.update.message.from.id);
-  console.log(member);
+  const chatMember = await bot.telegram.getChatMember(
+    chatId,
+    ctx.update.message.from.id
+  );
+
+  // user role
+  const role = ["administrator", "creator"].includes(chatMember.status)
+    ? "admin"
+    : "user";
+
   // api request
   try {
-    response = await axios.delete(`${process.env.API}/command/` + chatId, {
-      name: payload[0],
-    });
+    response = await axios.delete(
+      `${process.env.API}/command/${chatId}/${user}/${role}`,
+      {
+        data: {
+          name: payload[0],
+        },
+      }
+    );
 
     // command deleted
-    if (response.data.message == "command deleted") {
+    if (response.data.message == "Command deleted") {
       ctx.reply("✨ *El comando ha sido eliminado\\!*", {
         parse_mode: "MarkdownV2",
         reply_to_message_id: messageId,
@@ -34,21 +48,24 @@ export default async function remove(ctx, bot, commandList) {
   } catch (error) {
     // error handling
     switch (error.response.data.error) {
-      case "Only administrators":
-        ctx.reply("⚠ Solo *Administradores*", {
+      case "You are not have authorization to delete the command":
+        ctx.reply("⚠ Solo *Administradores* o *Propietario* del comando\\.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
         });
         break;
       case "chat not found":
-        ctx.reply("⚠ *Atención:* No hay comandos aún, trata creando alguno.", {
-          parse_mode: "MarkdownV2",
-          reply_to_message_id: messageId,
-        });
+        ctx.reply(
+          "⚠ *Atención:* No hay comandos aún\\, trata creando alguno\\.",
+          {
+            parse_mode: "MarkdownV2",
+            reply_to_message_id: messageId,
+          }
+        );
         break;
 
-      default:
-        ctx.reply("⚠ *Atención:* Comando no existe.", {
+      case "Command not found":
+        ctx.reply("⚠ *Atención:* Comando no existe\\.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
         });
