@@ -48,7 +48,7 @@ export default async function remove(ctx, bot) {
   } catch (error) {
     // error handling
     switch (error.response.data.error) {
-      case "You are not have authorization to delete the command":
+      case "You dont have authorization to delete the command":
         ctx.reply("⚠ Solo *Administradores* o *Propietario* del comando\\.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
