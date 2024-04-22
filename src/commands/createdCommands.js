@@ -4,8 +4,21 @@ export default async function createdCommands(ctx, bot) {
   // if there is no message text
   if (!ctx.update.message.text) return;
 
-  if (Math.random() < 0.05) {
-    ctx.reply("🤫🧏‍♂️");
+  const ranText = [
+    "bueno bueno que pasa",
+    "Como asi?",
+    "siiiiiii!?",
+    "🤫🧏‍♂️",
+    "ombe dejen dormi",
+    "ua",
+    "tiriririririri",
+    "😈",
+    "@Kespinal",
+    "g",
+  ];
+
+  if (Math.floor(Math.random() * 100 + 1) <= 4) {
+    ctx.reply(ranText[Math.floor(Math.random() * ranText.length)]);
   }
 
   return;
