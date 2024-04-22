@@ -4,6 +4,12 @@ export default async function createdCommands(ctx, bot) {
   // if there is no message text
   if (!ctx.update.message.text) return;
 
+  if (Math.random() < 0.05) {
+    ctx.reply("🤫🧏‍♂️");
+  }
+
+  return;
+
   const message = ctx.update.message; // message object
   const commandString = message.text.trim().split(" ")[0]; // only the command (string)
   const chatId = message.chat.id;
