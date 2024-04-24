@@ -38,9 +38,9 @@ export async function foreignExchange(ctx) {
 
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
-      `💵 *${coin}*: ${Math.floor(
+      `💵 *${coin}*: $${Math.floor(
         value * response.data.COP.value * amount
-      ).toLocaleString()}`,
+      ).toLocaleString()} COP`,
     { parse_mode: "MarkdownV2" }
   );
 }
