@@ -40,15 +40,6 @@ export default async function purge(ctx, bot) {
   // the first message (to which a response was received)
   const firstId = ctx.update.message.reply_to_message.message_id;
 
-  // if are more than 50 messages to remove
-  if (lastId - firstId > 50) {
-    ctx.reply("⚠ *Excede el maximo* (Max: 50 msgs)", {
-      parse_mode: "MarkdownV2",
-      reply_to_message_id: lastId,
-    });
-    return;
-  }
-
   // delete the main message
   bot.telegram.deleteMessage(chatId, lastId);
 
@@ -58,6 +49,9 @@ export default async function purge(ctx, bot) {
 
 async function deleteMessages(bot, chatId, firstId, lastId) {
   for (let i = firstId; i < lastId; i++) {
+    if (i - firstId > 50) {
+      break;
+    }
     try {
       await bot.telegram.deleteMessage(chatId, i);
     } catch (err) {
