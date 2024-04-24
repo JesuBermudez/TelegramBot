@@ -9,9 +9,9 @@ export async function foreignExchange(ctx) {
   if (payload.length > 1) {
     coin = isNaN(payload[0]) ? payload[0].toUpperCase() : coin;
     amount = !isNaN(payload[1]) ? payload[1] : amount;
-  } else if (payload.length == 1 && isNaN(payload[0])) {
+  } else if (payload.length == 1 && payload[0] != "" && isNaN(payload[0])) {
     coin = payload[0].toUpperCase();
-  } else if (payload.length == 1 && !isNaN(payload[0])) {
+  } else if (payload.length == 1 && payload[0] != "" && !isNaN(payload[0])) {
     amount = payload[0];
   }
 
@@ -36,7 +36,7 @@ export async function foreignExchange(ctx) {
     value = 1;
   }
 
-  console.log(value, response.data.COP.value, amount);
+  console.log(payload, value, response.data.COP.value, amount);
 
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
