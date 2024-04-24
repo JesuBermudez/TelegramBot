@@ -41,7 +41,7 @@ export async function foreignExchange(ctx) {
       `💵 *${coin}*: $${new Intl.NumberFormat("de-DE", {
         style: "currency",
         currency: "EUR",
-        maximumSignificantDigits: 2,
+        maximumSignificantDigits: 0,
       }).format(value * response.data.COP.value * amount)} COP`,
     { parse_mode: "MarkdownV2" }
   );
