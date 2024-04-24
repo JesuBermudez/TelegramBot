@@ -38,10 +38,9 @@ export async function foreignExchange(ctx) {
 
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
-      `💵 *${coin}*: $${new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
-      }).format(Math.floor(value * response.data.COP.value * amount))} COP`,
+      `💵 *${coin}*: $${(value * response.data.COP.value * amount).toFixed(
+        2
+      )} COP`,
     { parse_mode: "MarkdownV2" }
   );
 }
