@@ -9,7 +9,7 @@ import laughter from "./commands/laughter.js";
 import createdCommands from "./commands/createdCommands.js";
 import translator from "./commands/translate.js";
 import weather from "./commands/weather.js";
-import { currentValue, foreignExchange } from "./commands/exchangeRate.js";
+import { foreignExchange } from "./commands/exchangeRate.js";
 
 const bot = new Telegraf(process.env.token);
 
