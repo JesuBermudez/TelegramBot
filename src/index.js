@@ -31,8 +31,8 @@ bot.command("coin", (ctx) => foreignExchange(ctx));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  /*webhook: {
+  webhook: {
     domain: process.env.DOMAIN,
     port: process.env.PORT,
-  },*/
+  },
 });
