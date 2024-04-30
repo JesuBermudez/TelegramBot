@@ -43,12 +43,33 @@ export async function foreignExchange(ctx) {
     value = 1;
   }
 
+  // primera posicion los numeros enteros y en la segunda los decimales
+  const aux = (value * response.data.COP.value * amount).toString().split(".");
+
+  // la cadena de los enteros a un array por cada numero, en reversa
+  // por cada 3 y si no es el ultimo, se le agrega \\. + v
+  // sino, el mismo valor, en reversa de nuevo y se une
+  const integers = aux[0]
+    .split("")
+    .reverse()
+    .map((v, i) => {
+      if ((i + 1) % 3 === 0 && i !== aux[0].length - 1) {
+        return "\\." + v;
+      } else {
+        return v;
+      }
+    })
+    .reverse()
+    .join("");
+
+  // se convierte la parte decimal a float y se corta a solo
+  // 2 numeros despues del punto, para despues dividir el string
+  // en .split(".") para solo tener los 2 numeros despues del .
+  const decimals = parseFloat(`0.${aux[1]}`).toFixed(2);
+
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
-      `💵 *${coin}*: $${(value * response.data.COP.value * amount)
-        .toLocaleString("es-ES")
-        .split(".")
-        .join("\\.")} COP`,
+      `💵 *${coin}*: $${integers}.${decimals.split(".")[1]} COP`,
     { parse_mode: "MarkdownV2" }
   );
 }
