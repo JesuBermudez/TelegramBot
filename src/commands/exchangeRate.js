@@ -47,7 +47,8 @@ export async function foreignExchange(ctx) {
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
       `💵 *${coin}*: $${(value * response.data.COP.value * amount)
         .toLocaleString("es-ES")
-        .replace(/\./g, "\\.")} COP`,
+        .split(".")
+        .join("\\.")} COP`,
     { parse_mode: "MarkdownV2" }
   );
 }
