@@ -18,6 +18,10 @@ export async function foreignExchange(ctx) {
     amount = payload[1];
   }
 
+  if (payload[0] == "") {
+    amount = 1;
+  }
+
   if (response == "Error") {
     ctx.reply("⚠ Error de la API");
   }
