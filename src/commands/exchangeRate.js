@@ -69,7 +69,7 @@ export async function foreignExchange(ctx) {
 
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
-      `💵 *${coin}*: $${integers}.${decimals.split(".")[1]} COP`,
+      `💵 *${coin}*: $${integers},${decimals.split(".")[1]} COP`,
     { parse_mode: "MarkdownV2" }
   );
 }
