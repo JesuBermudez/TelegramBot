@@ -7,14 +7,24 @@ export default async function createdCommands(ctx, bot) {
   const ranText = [
     "bueno bueno que pasa",
     "Como asi?",
-    "siiiiiii!?",
-    "🤫🧏‍♂️",
+    Array.from({ length: Math.random() * 13 }, (_) =>
+      Math.round(Math.random())
+    ).join(""),
+    "siiiiii!?",
+    "para pensar",
+    "bueno, vamos dejando la bulla",
     "ombe dejen dormi",
     "ua",
+    "jejeje",
+    "si pero quien pa mete vicio?",
     "tiriririririri",
-    "😈",
-    "@Kespinal",
+    "lit",
+    "el propio",
+    "en serio?",
+    "no nada",
+    "aro",
     "g",
+    "tu sabe como e",
   ];
 
   if (Math.floor(Math.random() * 100 + 1) <= 4) {

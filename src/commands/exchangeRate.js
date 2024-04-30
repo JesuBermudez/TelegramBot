@@ -6,13 +6,16 @@ export async function foreignExchange(ctx) {
   let coin = "USD";
   let amount = 1;
 
-  if (payload.length > 1) {
-    coin = isNaN(payload[0]) ? payload[0].toUpperCase() : coin;
-    amount = !isNaN(payload[1]) ? payload[1] : amount;
-  } else if (payload.length == 1 && payload[0] != "" && isNaN(payload[0])) {
+  // si el primer argumento es caracteres
+  if (isNaN(payload[0])) {
     coin = payload[0].toUpperCase();
-  } else if (payload.length == 1 && payload[0] != "" && !isNaN(payload[0])) {
+  } else {
     amount = payload[0];
+  }
+
+  // si hay segundo argumento y es numerico
+  if (payload.length > 1 && !isNaN(payload[1])) {
+    amount = payload[1];
   }
 
   if (response == "Error") {
@@ -39,9 +42,7 @@ export async function foreignExchange(ctx) {
   ctx.reply(
     `*${strDate[2]}/${strDate[1]}/${strDate[0]}* \\- *${strHour[0]}:${strHour[1]}*\n` +
       `💵 *${coin}*: $${(value * response.data.COP.value * amount)
-        .toFixed(2)
         .toLocaleString("es-ES")
-        .replace(".", ",")
         .replace(/\./g, "\\.")} COP`,
     { parse_mode: "MarkdownV2" }
   );
