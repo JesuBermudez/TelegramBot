@@ -60,6 +60,8 @@ export async function help(ctx, bot) {
       "__Uso__: \\- `/risa numero_de_letras mensaje_extra` \\(respondiendo o no a un mensaje\\)\n\n" +
       "   *9*\\. */tr*   \\- Traduce oraciones\\.\n" +
       "__Uso__: \\- `/tr oracion`\n    \\- Responder con: `/tr` a un mensaje\n\n" +
+      "   *10*\\. */coin*  \\- Conversor de divisas\\.\n" +
+      "__Uso__: \\- `/coin | /coin EUR | /coin 10 | /coin EUR 10` \n\n" +
       "🔹 *Comandos creados*:\n" +
       result,
     { parse_mode: "MarkdownV2" }
