@@ -25,10 +25,7 @@ export default async function downloader(ctx) {
     // Descarga el video
     const videoStream = ytdl(videoUrl);
 
-    // Genera un nombre de archivo único
-    const timestamp = Date.now();
-
-    const fileName = `src/temp/video_${timestamp}.mp4`;
+    const fileName = `src/temp/video.mp4`;
 
     // Guarda el video en una ubicación temporal
     const writeStream = fs.createWriteStream(fileName);
@@ -37,14 +34,7 @@ export default async function downloader(ctx) {
     // Espera a que se complete la descarga
     writeStream.on("finish", () => {
       // Envía el video al chat
-      ctx
-        .replyWithVideo({ source: fileName }, { supports_streaming: true })
-        .then(() => {
-          // Borra el archivo localmente
-          fs.unlink(fileName, (err) => {
-            if (err) console.log("Error al borrar el archivo:", err);
-          });
-        });
+      ctx.replyWithVideo({ source: fileName }, { supports_streaming: true });
     });
   } catch (error) {
     ctx.reply("⚠ Error al descargar el video.", {
