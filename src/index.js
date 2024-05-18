@@ -10,6 +10,7 @@ import createdCommands from "./commands/createdCommands.js";
 import translator from "./commands/translate.js";
 import weather from "./commands/weather.js";
 import { foreignExchange } from "./commands/exchangeRate.js";
+import downloader from "./commands/ytdl.js";
 
 const bot = new Telegraf(process.env.token);
 
@@ -27,6 +28,7 @@ bot.command("risa", (ctx) => laughter(ctx, bot));
 bot.command("tr", (ctx) => translator(ctx));
 bot.command("clima", (ctx) => weather(ctx));
 bot.command("coin", (ctx) => foreignExchange(ctx));
+bot.command("yt", (ctx) => downloader(ctx, bot));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
