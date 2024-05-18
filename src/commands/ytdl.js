@@ -1,5 +1,4 @@
 import ytdl from "ytdl-core";
-import path from "path";
 import fs from "fs";
 
 export default async function downloader(ctx) {
@@ -29,11 +28,7 @@ export default async function downloader(ctx) {
     // Genera un nombre de archivo único
     const timestamp = Date.now();
 
-    const currentFilePath = new URL(import.meta.url).pathname;
-    const currentDirectory = path.dirname(currentFilePath);
-    const fileName = path
-      .join(currentDirectory, "..", "temp", `video_${timestamp}.mp4`)
-      .replace("\\", "");
+    const fileName = `src/temp/video_${timestamp}.mp4`;
 
     // Guarda el video en una ubicación temporal
     const writeStream = fs.createWriteStream(fileName);
