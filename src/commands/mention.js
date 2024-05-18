@@ -6,6 +6,11 @@ export async function all(ctx, bot) {
   let response = ""; // api response
   let command = {}; // the "all" command
 
+  // verify that the member isn't KENDRYS
+  const chatMember = await bot.telegram.getChatMember(chatId, message.from.id);
+
+  if (chatMember.user.username == "kendricita") return;
+
   // make the api request
   try {
     response = await axios.get(`${process.env.API}/command/${chatId}/all`);

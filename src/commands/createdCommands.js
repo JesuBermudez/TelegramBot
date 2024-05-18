@@ -83,24 +83,28 @@ function chatWithAI(ctx) {
 }
 
 const ranText = [
-  "bueno bueno que pasa",
   "Como asi?",
   Array.from({ length: Math.random() * 13 }, (_) =>
     Math.round(Math.random())
   ).join(""),
   "siiiiii!?",
   "para pensar",
-  "bueno, vamos dejando la bulla",
-  "ombe dejen dormi",
+  "salgan del chat, quiero estar solo 😔",
   "ua",
   "jejeje",
-  "si pero quien pa mete vicio?",
+  "ombe, la mala pa toitos",
   "tiriririririri",
+  "aja y ustedes no tienen nada que hace?",
   "lit",
   "el propio",
+  "enefecto",
   "en serio?",
   "no nada",
+  "a la final...",
+  "buenasss",
   "aro",
+  "pecueca",
   "g",
+  "que dice la pipol",
   "tu sabe como e",
 ];
