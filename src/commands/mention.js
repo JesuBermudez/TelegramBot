@@ -65,5 +65,6 @@ export async function add(ctx) {
         reply_to_message_id: message.message_id,
       });
     }
+    console.log(error.data.error);
   }
 }

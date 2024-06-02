@@ -33,8 +33,8 @@ bot.command("yt", (ctx) => downloader(ctx, bot));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  webhook: {
+  /* webhook: {
     domain: process.env.DOMAIN,
     port: process.env.PORT,
-  },
+  }, */
 });
