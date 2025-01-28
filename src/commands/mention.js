@@ -9,8 +9,6 @@ export async function all(ctx, bot) {
   // verify that the member isn't KENDRYS
   const chatMember = await bot.telegram.getChatMember(chatId, message.from.id);
 
-  if (chatMember.user.username == "kendricita") return;
-
   // make the api request
   try {
     response = await axios.get(`${process.env.API}/command/${chatId}/all`);
@@ -65,6 +63,6 @@ export async function add(ctx) {
         reply_to_message_id: message.message_id,
       });
     }
-    console.log(error.response.data);
+    console.log(error.response);
   }
 }

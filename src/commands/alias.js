@@ -53,6 +53,11 @@ export default async function alias(ctx) {
         parse_mode: "MarkdownV2",
         reply_to_message_id: message.message_id,
       });
+    } else {
+      ctx.reply("⚠️ *Anda muerto el server\\.*", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: message.message_id,
+      });
     }
   }
 }

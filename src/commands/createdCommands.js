@@ -12,7 +12,7 @@ export default async function createdCommands(ctx, bot) {
 
   // bot gives an AI response
   if (!commandString.startsWith("/")) {
-    chatWithAI(ctx);
+    //chatWithAI(ctx);
     return;
   }
 
@@ -34,9 +34,6 @@ export default async function createdCommands(ctx, bot) {
   // if found
   if (response != "command not found") {
     switch (command.type) {
-      case "text":
-        textCommand(ctx, command, message.hasOwnProperty("reply_to_message"));
-        break;
       case "sticker":
         stickerCommand(
           ctx,
@@ -75,36 +72,3 @@ function stickerCommand(ctx, bot, chatId, command, reply = false) {
     bot.telegram.sendSticker(chatId, command.command);
   }
 }
-
-function chatWithAI(ctx) {
-  if (Math.floor(Math.random() * 100 + 1) <= 4) {
-    ctx.reply(ranText[Math.floor(Math.random() * ranText.length)]);
-  }
-}
-
-const ranText = [
-  "Como asi?",
-  Array.from({ length: Math.random() * 13 }, (_) =>
-    Math.round(Math.random())
-  ).join(""),
-  "siiiiii!?",
-  "para pensar",
-  "salgan del chat, quiero estar solo 😔",
-  "ua",
-  "jejeje",
-  "ombe, la mala pa toitos",
-  "tiriririririri",
-  "aja y ustedes no tienen nada que hace?",
-  "lit",
-  "el propio",
-  "enefecto",
-  "en serio?",
-  "no nada",
-  "a la final...",
-  "buenasss",
-  "aro",
-  "pecueca",
-  "g",
-  "que dice la pipol",
-  "tu sabe como e",
-];

@@ -54,7 +54,8 @@ export default async function remove(ctx, bot) {
           reply_to_message_id: messageId,
         });
         break;
-      case "chat not found":
+
+      case "Command not found or Chat not found":
         ctx.reply(
           "⚠ *Atención:* No hay comandos aún\\, trata creando alguno\\.",
           {
@@ -64,8 +65,15 @@ export default async function remove(ctx, bot) {
         );
         break;
 
-      case "Command not found":
-        ctx.reply("⚠ *Atención:* Comando no existe\\.", {
+      case "Internal server error":
+        ctx.reply("⚠ *Atención:* Error con el server\\.", {
+          parse_mode: "MarkdownV2",
+          reply_to_message_id: messageId,
+        });
+        break;
+
+      default:
+        ctx.reply("⚠ Esta muerto el server\\.", {
           parse_mode: "MarkdownV2",
           reply_to_message_id: messageId,
         });
