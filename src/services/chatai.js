@@ -1,7 +1,28 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function chatai(ctx) {
-  const message = ctx.update.message.text;
+  const message = ctx.update.message;
+  const pass = false;
+
+  // validations to respond with AI
+  if (
+    message.reply_to_message &&
+    message.reply_to_message.from.id === 6780284659
+  ) {
+    pass = true;
+  }
+
+  if (message.text.includes("TeamCodersBot")) {
+    pass = true;
+  }
+
+  if (Math.floor(Math.random() * 100 + 1) <= 4) {
+    pass = true;
+  }
+
+  if (pass === false) return;
+
+  // has to respond to the message
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const chat = model.startChat({
@@ -18,8 +39,9 @@ export default async function chatai(ctx) {
     ],
   });
 
+  // request to the Gemini API
   try {
-    const result = await chat.sendMessage(message);
+    const result = await chat.sendMessage(message.text);
     const response = result.response.text();
 
     if (response.includes("Skip")) return;
