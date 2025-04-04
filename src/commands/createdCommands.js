@@ -12,7 +12,10 @@ export default async function createdCommands(ctx, bot) {
   let command = {}; // command from the api
 
   // bot gives an AI response
-  if (!commandString.startsWith("/")) {
+  if (
+    !commandString.startsWith("/") &&
+    Math.floor(Math.random() * 100 + 1) <= 4
+  ) {
     chatai(ctx);
     return;
   }
