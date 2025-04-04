@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function chatai(ctx) {
   const message = ctx.update.message;
-  const pass = false;
+  let pass = false;
 
   // validations to respond with AI
   if (
