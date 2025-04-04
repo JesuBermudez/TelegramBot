@@ -1,4 +1,5 @@
 import axios from "axios";
+import chatai from "../services/chatai.js";
 
 export default async function createdCommands(ctx, bot) {
   // if there is no message text
@@ -12,7 +13,7 @@ export default async function createdCommands(ctx, bot) {
 
   // bot gives an AI response
   if (!commandString.startsWith("/")) {
-    //chatWithAI(ctx);
+    chatai(ctx);
     return;
   }
 
