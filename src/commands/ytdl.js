@@ -8,7 +8,7 @@ export default async function downloader(ctx, bot) {
 
   if (!videoUrl.length > 22) {
     ctx.reply("⚠ Enlace no valido.", {
-      reply_to_message_id: replyId,
+      reply_to_message_id: msgId,
     });
     return;
   }
@@ -33,7 +33,7 @@ export default async function downloader(ctx, bot) {
     );
   } catch (error) {
     ctx.reply("⚠ Error al descargar el video.", {
-      reply_to_message_id: replyId,
+      reply_to_message_id: msgId,
     });
   }
 }
