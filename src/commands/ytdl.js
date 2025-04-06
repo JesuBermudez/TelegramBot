@@ -14,8 +14,6 @@ export default async function downloader(ctx, bot) {
   }
 
   try {
-    await bot.telegram.deleteMessage(mainId, msgId);
-
     // Descarga el video
     const response = await axios.get(
       `${process.env.DOWNLOADER_API}${videoUrl}`,
@@ -31,6 +29,7 @@ export default async function downloader(ctx, bot) {
       { source: "src/download/video.mp4" },
       { supports_streaming: true }
     );
+    await bot.telegram.deleteMessage(mainId, msgId);
   } catch (error) {
     console.log(error);
     ctx.reply("⚠ Error al descargar el video.", {
