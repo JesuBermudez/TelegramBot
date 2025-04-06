@@ -32,6 +32,7 @@ export default async function downloader(ctx, bot) {
       { supports_streaming: true }
     );
   } catch (error) {
+    console.log(error);
     ctx.reply("⚠ Error al descargar el video.", {
       reply_to_message_id: msgId,
     });
