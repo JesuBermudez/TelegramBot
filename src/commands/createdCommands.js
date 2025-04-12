@@ -1,19 +1,29 @@
 import axios from "axios";
 import chatai from "../services/chatai.js";
+import toPdf from "./toPdf.js";
 
 export default async function createdCommands(ctx, bot) {
-  // if there is no message text
-  if (!ctx.update.message.text) return;
-
   const message = ctx.update.message; // message object
-  const commandString = message.text.trim().split(" ")[0]; // only the command (string)
   const chatId = message.chat.id;
   let response = {}; // api response
   let command = {}; // command from the api
 
+  if (!message.hasOwnProperty("text") && !message.hasOwnProperty("caption"))
+    return;
+
+  // only the command (string)
+  let commandString = message.text || message.caption;
+  commandString = commandString.trim().split(" ")[0];
+
+  // command to convert to pdf
+  if (commandString === "/pdf") {
+    toPdf(ctx);
+    return;
+  }
+
   // bot gives an AI response
   if (!commandString.startsWith("/")) {
-    chatai(ctx);
+    chatai(ctx, message.text || message.caption);
     return;
   }
 
@@ -36,40 +46,24 @@ export default async function createdCommands(ctx, bot) {
   if (response != "command not found") {
     switch (command.type) {
       case "sticker":
-        stickerCommand(
-          ctx,
-          bot,
-          chatId,
-          command,
-          message.hasOwnProperty("reply_to_message")
-        );
+        stickerCommand(bot, chatId, command, message);
         break;
 
-      default:
-        textCommand(ctx, command, message.hasOwnProperty("reply_to_message"));
+      case "text":
+        textCommand(ctx, command, message);
         break;
     }
   }
 }
 
-function textCommand(ctx, command, reply = false) {
-  // checking if is replying to another message
-  if (reply) {
-    ctx.reply(command.command, {
-      reply_to_message_id: ctx.update.message.reply_to_message.message_id,
-    });
-  } else {
-    ctx.reply(command.command);
-  }
+function textCommand(ctx, command, message) {
+  ctx.reply(command.command, {
+    reply_to_message_id: message.reply_to_message?.message_id,
+  });
 }
 
-function stickerCommand(ctx, bot, chatId, command, reply = false) {
-  // checking if is replying to another message
-  if (reply) {
-    bot.telegram.sendSticker(chatId, command.command, {
-      reply_to_message_id: ctx.update.message.reply_to_message.message_id,
-    });
-  } else {
-    bot.telegram.sendSticker(chatId, command.command);
-  }
+function stickerCommand(bot, chatId, command, message) {
+  bot.telegram.sendSticker(chatId, command.command, {
+    reply_to_message_id: message.reply_to_message?.message_id,
+  });
 }

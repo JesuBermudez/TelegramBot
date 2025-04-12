@@ -14,7 +14,7 @@ export default async function downloader(ctx, bot) {
   }
 
   try {
-    // Descarga el video
+    // Download the video using the downloader API
     const response = await axios.get(
       `${process.env.DOWNLOADER_API}${videoUrl}`,
       {
@@ -22,16 +22,15 @@ export default async function downloader(ctx, bot) {
       }
     );
 
-    fs.writeFileSync("src/download/video.mp4", Buffer.from(response.data));
+    fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
 
-    // Envía el video al chat
+    // Send the video to the user
     ctx.replyWithVideo(
-      { source: "src/download/video.mp4" },
+      { source: "src/temp/video.mp4" },
       { supports_streaming: true }
     );
     await bot.telegram.deleteMessage(mainId, msgId);
   } catch (error) {
-    console.log(error);
     ctx.reply("⚠ Error al descargar el video.", {
       reply_to_message_id: msgId,
     });

@@ -16,6 +16,7 @@
     "@vitalets/google-translate-api": "^9.2.0",
     "axios": "^1.6.5",
     "dotenv": "^16.3.1",
+    "form-data": "^4.0.2",
     "telegraf": "^4.15.3",
     "ytdl-core": "^4.11.5"
   }

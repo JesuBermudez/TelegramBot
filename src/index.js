@@ -1,5 +1,5 @@
-import { Telegraf } from "telegraf";
 import "dotenv/config";
+import { Telegraf } from "telegraf";
 import { start, help } from "./commands/primary.js";
 import { all, add } from "./commands/mention.js";
 import alias from "./commands/alias.js";
@@ -11,6 +11,7 @@ import translator from "./commands/translate.js";
 import weather from "./commands/weather.js";
 import { foreignExchange } from "./commands/exchangeRate.js";
 import downloader from "./commands/ytdl.js";
+import toPdf from "./commands/toPdf.js";
 
 const bot = new Telegraf(process.env.token);
 
@@ -29,12 +30,13 @@ bot.command("tr", (ctx) => translator(ctx));
 bot.command("clima", (ctx) => weather(ctx));
 bot.command("coin", (ctx) => foreignExchange(ctx));
 bot.command("get", (ctx) => downloader(ctx, bot));
+bot.command("pdf", (ctx) => toPdf(ctx, bot));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  webhook: {
-    domain: process.env.DOMAIN,
-    port: process.env.PORT,
-  },
+  // webhook: {
+  //   domain: process.env.DOMAIN,
+  //   port: process.env.PORT,
+  // },
 });

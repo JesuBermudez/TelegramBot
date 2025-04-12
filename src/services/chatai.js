@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export default async function chatai(ctx) {
+export default async function chatai(ctx, text) {
   const message = ctx.update.message;
   let pass = false;
 
@@ -12,7 +12,7 @@ export default async function chatai(ctx) {
     pass = true;
   }
 
-  if (message.text.includes("TeamCodersBot")) {
+  if (text.includes("TeamCodersBot")) {
     pass = true;
   }
 
@@ -41,7 +41,7 @@ export default async function chatai(ctx) {
 
   // request to the Gemini API
   try {
-    const result = await chat.sendMessage(message.text);
+    const result = await chat.sendMessage(text);
     const response = result.response.text();
 
     if (response.includes("Skip")) return;
