@@ -1,6 +1,6 @@
 import axios from "axios";
 import fs from "fs";
-import handleMessageText from "../utils/handleMessageText";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx); // command string and text

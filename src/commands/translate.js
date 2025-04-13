@@ -1,5 +1,5 @@
 import { translate } from "@vitalets/google-translate-api";
-import handleMessageText from "../utils/handleMessageText";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function translator(ctx) {
   const { text } = handleMessageText(ctx); // command string and text
