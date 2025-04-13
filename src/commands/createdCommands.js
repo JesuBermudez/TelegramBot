@@ -1,34 +1,25 @@
 import axios from "axios";
 import chatai from "../services/chatai.js";
-import toPdf from "./toPdf.js";
+import handleCaptionCommand from "../utils/handleCaptionCommand.js";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function createdCommands(ctx, bot) {
+  const { commandString, text } = handleMessageText(ctx); // command string and text
   const message = ctx.update.message; // message object
   const chatId = message.chat.id;
   let response = {}; // api response
   let command = {}; // command from the api
 
-  if (!message.hasOwnProperty("text") && !message.hasOwnProperty("caption"))
-    return;
-
-  // only the command (string)
-  let commandString = message.text || message.caption;
-  commandString = commandString.trim().split(" ")[0];
-
-  // command to convert to pdf
-  if (commandString === "/pdf") {
-    toPdf(ctx);
-    return;
-  }
+  if (commandString.length <= 1) return; // no text or caption
 
   // bot gives an AI response
   if (!commandString.startsWith("/")) {
-    chatai(ctx, message.text || message.caption);
+    chatai(ctx, `${commandString} ${text}`);
     return;
   }
 
-  // message doesn't have a valid command
-  if (!commandString.length > 1) return;
+  // has caption command
+  if (message.caption && handleCaptionCommand(ctx, bot, commandString)) return;
 
   // api request
   try {

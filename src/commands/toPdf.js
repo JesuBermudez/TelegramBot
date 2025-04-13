@@ -1,4 +1,4 @@
-import getFile from "../shared/getFile.js";
+import getFile from "../utils/getFile.js";
 
 export default async function toPdf(ctx) {
   const message = ctx.update.message;
@@ -13,8 +13,6 @@ export default async function toPdf(ctx) {
     });
     return;
   }
-
-  console.log("fileInfo", fileInfo);
 
   const { data, fileName } = fileInfo;
   const pdfBuffer = Buffer.from(data);

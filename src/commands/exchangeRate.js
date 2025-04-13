@@ -1,16 +1,15 @@
 import axios from "axios";
 
 export async function foreignExchange(ctx) {
-  const payload = ctx.payload.trim().split(" ");
+  const { text } = handleMessageText(ctx); // command string and text
+  const payload = text.trim().split(" ");
   const response = await fetchApi();
   let coin = "USD";
   let amount = 1;
 
   // si el primer argumento es caracteres
-  if (isNaN(payload[0])) {
+  if (payload[0] && isNaN(payload[0])) {
     coin = payload[0].toUpperCase();
-  } else {
-    amount = payload[0];
   }
 
   // si hay segundo argumento y es numerico
@@ -18,8 +17,8 @@ export async function foreignExchange(ctx) {
     amount = payload[1];
   }
 
-  if (payload[0] == "") {
-    amount = 1;
+  if (payload[0] && !isNaN(payload[0])) {
+    amount = payload[0];
   }
 
   if (response == "Error") {
@@ -30,13 +29,11 @@ export async function foreignExchange(ctx) {
   const strDate = date[0].split("-");
   const strHour = date[1].split(":");
 
-  let value = response.data[coin];
+  let value = response.data[coin]?.value;
 
   if (value == undefined) {
     value = response.data.USD.value;
     coin = "USD";
-  } else {
-    value = value.value;
   }
 
   if (coin == "COP") {
