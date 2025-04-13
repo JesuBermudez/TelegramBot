@@ -1,9 +1,9 @@
-import { foreignExchange } from "../commands/exchangeRate";
-import { all } from "../commands/mention";
-import toPdf from "../commands/toPdf";
-import translator from "../commands/translate";
-import weather from "../commands/weather";
-import downloader from "../commands/ytdl";
+import { foreignExchange } from "../commands/exchangeRate.js";
+import { all } from "../commands/mention.js";
+import toPdf from "../commands/toPdf.js";
+import translator from "../commands/translate.js";
+import weather from "../commands/weather.js";
+import downloader from "../commands/ytdl.js";
 
 export default function handleCaptionCommand(ctx, bot, commandString) {
   switch (commandString) {
