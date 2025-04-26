@@ -44,7 +44,7 @@ export default async function chatai(ctx, text) {
     const result = await chat.sendMessage(text);
     const response = result.response.text();
 
-    if (response.includes("Skip")) return;
+    if (response.toLocaleLowerCase().includes("skip")) return;
 
     ctx.reply(response, {
       reply_to_message_id: ctx.update.message.message_id,
