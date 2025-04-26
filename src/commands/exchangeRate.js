@@ -1,5 +1,5 @@
 import axios from "axios";
-import { handleMessageText } from "../utils/handleMessageText.js";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export async function foreignExchange(ctx) {
   const { text } = handleMessageText(ctx); // command string and text
