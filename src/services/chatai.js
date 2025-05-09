@@ -17,9 +17,11 @@ export default async function chatai(ctx, text) {
     if (text) return;
     contextMessage.push({
       role: isBot ? "model" : "user",
-      parts: [{ text: text }],
+      parts: [{ text }],
     });
   }
+
+  console.log("Mensaje de AI");
 
   // respond to the message
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
