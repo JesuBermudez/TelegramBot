@@ -45,8 +45,6 @@ export default async function chatai(ctx, txt) {
     const result = await chat.sendMessage(txt);
     const response = result.response.text();
 
-    console.log(response);
-
     if (response.toLocaleLowerCase().includes("skip")) return;
 
     ctx.reply(response, {
