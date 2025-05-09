@@ -1,28 +1,29 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import handleMessageText from "../utils/handleMessageText";
 
 export default async function chatai(ctx, text) {
   const message = ctx.update.message;
-  let pass = false;
+  const contextMessage = [];
+  // Validations to respond with AI
+  const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
+  const mentionsBot = text.includes("TeamCodersBot");
+  const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
 
-  // validations to respond with AI
-  if (
-    message.reply_to_message &&
-    message.reply_to_message.from.id === 6780284659
-  ) {
-    pass = true;
+  if (!(isReplyToBot || mentionsBot) || !randomChance) {
+    return;
   }
 
-  if (text.includes("TeamCodersBot")) {
-    pass = true;
+  // if the message is a reply to other message
+  if (message.reply_to_message) {
+    const { text, isBot } = handleMessageText(ctx.reply_to_message);
+    if (text) return;
+    contextMessage.push({
+      role: isBot ? "model" : "user",
+      parts: [{ text: text }],
+    });
   }
 
-  if (Math.floor(Math.random() * 100 + 1) <= 4) {
-    pass = true;
-  }
-
-  if (pass === false) return;
-
-  // has to respond to the message
+  // respond to the message
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const chat = model.startChat({
@@ -32,10 +33,11 @@ export default async function chatai(ctx, text) {
         role: "model",
         parts: [
           {
-            text: "Entendido, responderé de forma casual y con humor costeño.",
+            text: "Listo, yo respondo relajado como si fuera uno más del grupo.",
           },
         ],
       },
+      ...contextMessage,
     ],
   });
 
