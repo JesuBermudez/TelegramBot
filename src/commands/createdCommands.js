@@ -4,11 +4,13 @@ import handleCaptionCommand from "../utils/handleCaptionCommand.js";
 import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function createdCommands(ctx, bot) {
-  const { cmd, text } = handleMessageText(ctx); // command string and text
   const message = ctx.update.message; // message object
+  const { cmd, text } = handleMessageText(message); // command string and text
   const chatId = message.chat.id;
   let response = {}; // api response
   let command = {}; // command from the api
+
+  console.log("command", cmd);
 
   if (cmd.length <= 1 || text.length <= 1) return; // no text or caption
 

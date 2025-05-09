@@ -2,7 +2,7 @@ import axios from "axios";
 import handleMessageText from "../utils/handleMessageText.js";
 
 export async function foreignExchange(ctx) {
-  const { text } = handleMessageText(ctx); // command string and text
+  const { text } = handleMessageText(ctx.update.message); // command string and text
   const payload = text.trim().split(" ");
   const response = await fetchApi();
   let coin = "USD";

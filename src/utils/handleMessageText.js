@@ -1,5 +1,5 @@
-export default function handleMessageText(ctx) {
-  let text = ctx.update.message.text || ctx.update.message.caption || "";
+export default function handleMessageText(message) {
+  let text = message.text || message.caption || "";
   const textArray = text.trim().split(/\s+/);
   let cmd = textArray[0];
 
@@ -14,6 +14,6 @@ export default function handleMessageText(ctx) {
   return {
     cmd,
     text,
-    isBot: ctx.update.message.from.is_bot,
+    isBot: message.from.is_bot,
   };
 }

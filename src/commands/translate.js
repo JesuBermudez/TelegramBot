@@ -2,8 +2,8 @@ import { translate } from "@vitalets/google-translate-api";
 import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function translator(ctx) {
-  const { text } = handleMessageText(ctx); // command string and text
   const message = ctx.update.message; // message object
+  const { text } = handleMessageText(message); // command string and text
   let traduced = ""; // traduced text
   let replyId = message.message_id;
 

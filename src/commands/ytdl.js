@@ -3,7 +3,7 @@ import fs from "fs";
 import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function downloader(ctx, bot) {
-  const { text } = handleMessageText(ctx); // command string and text
+  const { text } = handleMessageText(ctx.update.message); // command string and text
   const videoUrl = text.trim(" ").split(" ")[0];
   const mainId = ctx.update.message.chat.id;
   const msgId = ctx.update.message.message_id;
