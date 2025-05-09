@@ -14,11 +14,12 @@ export default async function chatai(ctx, text) {
   // if the message is a reply to other message
   if (message.reply_to_message) {
     const { text, isBot } = handleMessageText(message.reply_to_message);
-    if (text) return;
-    contextMessage.push({
-      role: isBot ? "model" : "user",
-      parts: [{ text }],
-    });
+    if (text) {
+      contextMessage.push({
+        role: isBot ? "model" : "user",
+        parts: [{ text }],
+      });
+    }
   }
 
   console.log("Mensaje de AI");
