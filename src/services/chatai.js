@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import handleMessageText from "../utils/handleMessageText.js";
 
-export default async function chatai(ctx, text) {
+export default async function chatai(ctx, txt) {
   const message = ctx.update.message;
   const contextMessage = [];
   // Validations to respond with AI
   const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
-  const mentionsBot = text.includes("TeamCodersBot");
+  const mentionsBot = txt.includes("TeamCodersBot");
   const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
@@ -44,7 +44,7 @@ export default async function chatai(ctx, text) {
 
   // request to the Gemini API
   try {
-    const result = await chat.sendMessage(text);
+    const result = await chat.sendMessage(txt);
     const response = result.response.text();
 
     if (response.toLocaleLowerCase().includes("skip")) return;
