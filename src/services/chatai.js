@@ -9,7 +9,7 @@ export default async function chatai(ctx, text) {
   const mentionsBot = text.includes("TeamCodersBot");
   const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
 
-  if (!(isReplyToBot || mentionsBot || !randomChance)) {
+  if (!(isReplyToBot || mentionsBot || randomChance)) {
     console.log("No es un mensaje para responder");
     return;
   }
