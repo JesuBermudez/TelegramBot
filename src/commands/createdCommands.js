@@ -10,8 +10,6 @@ export default async function createdCommands(ctx, bot) {
   let response = {}; // api response
   let command = {}; // command from the api
 
-  console.log("command", cmd);
-
   if (cmd.length <= 1 || text.length <= 1) return; // no text or caption
 
   // bot gives an AI response
