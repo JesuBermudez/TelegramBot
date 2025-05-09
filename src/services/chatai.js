@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import handleMessageText from "../utils/handleMessageText";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function chatai(ctx, text) {
   const message = ctx.update.message;
