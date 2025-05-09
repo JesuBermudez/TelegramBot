@@ -22,6 +22,8 @@ export default async function chatai(ctx, txt) {
     }
   }
 
+  console.log(txt);
+
   // respond to the message
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
