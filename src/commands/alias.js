@@ -14,7 +14,7 @@ export default async function alias(ctx) {
     return;
   }
 
-  if (/^[a-zA-Z0-9]+$/.test(payload[0])) {
+  if (!/^[a-zA-Z0-9]+$/.test(payload[0])) {
     ctx.reply(
       "*Atención:* El nombre del comando solo puede contener letras y números, nada de caracteres especiales",
       { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id }
