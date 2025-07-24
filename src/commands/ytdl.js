@@ -33,6 +33,7 @@ export default async function downloader(ctx, bot) {
         caption: `*_${ctx.update.message.from.username}_*: ${messageContent
           .slice(1)
           .join(" ")}`,
+        parse_mode: "MarkdownV2",
         supports_streaming: true,
       }
     );
