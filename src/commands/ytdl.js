@@ -4,11 +4,11 @@ import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx.update.message); // command string and text
-  const videoUrl = text.trim(" ").split(" ")[0];
+  const messageContent = text.trim(" ").split(" ");
   const mainId = ctx.update.message.chat.id;
   const msgId = ctx.update.message.message_id;
 
-  if (!videoUrl.length > 22) {
+  if (!messageContent[0].length > 22) {
     ctx.reply("⚠ Enlace no valido.", {
       reply_to_message_id: msgId,
     });
@@ -18,7 +18,7 @@ export default async function downloader(ctx, bot) {
   try {
     // Download the video using the downloader API
     const response = await axios.get(
-      `${process.env.DOWNLOADER_API}${videoUrl}`,
+      `${process.env.DOWNLOADER_API}${messageContent[0]}`,
       {
         responseType: "arraybuffer",
       }
@@ -30,7 +30,9 @@ export default async function downloader(ctx, bot) {
     ctx.replyWithVideo(
       { source: "src/temp/video.mp4" },
       {
-        caption: "De" + ctx.update.message.from.username,
+        caption: `*_${ctx.update.message.from.username}_*: ${messageContent
+          .slice(1)
+          .join(" ")}`,
         supports_streaming: true,
       }
     );
