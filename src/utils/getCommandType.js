@@ -14,6 +14,12 @@ export default function getCommandType(message) {
   if (message.reply_to_message.text) {
     return { type: "text", command: message.reply_to_message.text };
   }
+  if (message.reply_to_message.voice) {
+    return {
+      type: "voice",
+      command: message.reply_to_message.voice.file_id,
+    };
+  }
   if (message.reply_to_message.audio) {
     return {
       type: "audio",

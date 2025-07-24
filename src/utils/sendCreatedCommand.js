@@ -25,6 +25,12 @@ export default function sendCreatedCommand(bot, ctx, command) {
       });
       break;
 
+    case "voice":
+      bot.telegram.sendVoice(chatId, command.command, {
+        reply_to_message_id: ctx.update.message.reply_to_message?.message_id,
+      });
+      break;
+
     case "audio":
       bot.telegram.sendAudio(chatId, command.command, {
         reply_to_message_id: ctx.update.message.reply_to_message?.message_id,
