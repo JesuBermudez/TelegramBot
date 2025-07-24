@@ -35,8 +35,15 @@ bot.command("pdf", (ctx) => toPdf(ctx, bot));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
+<<<<<<< HEAD
   // webhook: {
   //   domain: process.env.DOMAIN,
   //   port: process.env.PORT
   // },
+=======
+  webhook: {
+    domain: process.env.DOMAIN,
+    port: process.env.PORT
+  },
+>>>>>>> 5bf6e178cbbcb37af6c5a4efdb22515123ff650c
 });
