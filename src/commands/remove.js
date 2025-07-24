@@ -47,37 +47,27 @@ export default async function remove(ctx, bot) {
     }
   } catch (error) {
     // error handling
-    switch (error.response.data.error) {
-      case "You dont have authorization to delete the command":
-        ctx.reply("⚠ Solo *Administradores* o *Propietario* del comando\\.", {
-          parse_mode: "MarkdownV2",
-          reply_to_message_id: messageId,
-        });
-        break;
-
-      case "Command not found or Chat not found":
-        ctx.reply(
-          "⚠ *Atención:* No hay comandos aún\\, trata creando alguno\\.",
-          {
-            parse_mode: "MarkdownV2",
-            reply_to_message_id: messageId,
-          }
-        );
-        break;
-
-      case "Internal server error":
-        ctx.reply("⚠ *Atención:* Error con el server\\.", {
-          parse_mode: "MarkdownV2",
-          reply_to_message_id: messageId,
-        });
-        break;
-
-      default:
-        ctx.reply("⚠ Esta muerto el server\\.", {
-          parse_mode: "MarkdownV2",
-          reply_to_message_id: messageId,
-        });
-        break;
+    console.log(error.response.data);
+    if (error.response.data.error.includes("You dont have authorization")) {
+      ctx.reply("⚠ Solo *Administradores* o *Propietario* del comando\\.", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: messageId,
+      });
+      return;
+    }
+    if (error.response.data.error.includes("Command not found")) {
+      ctx.reply("⚠ No existe el comando\\.", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: messageId,
+      });
+      return;
+    }
+    if (error.response.data.error.includes("Internal server error")) {
+      ctx.reply("⚠ *Atención:* Error con el server\\.", {
+        parse_mode: "MarkdownV2",
+        reply_to_message_id: messageId,
+      });
+      return;
     }
   }
 }

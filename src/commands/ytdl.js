@@ -29,7 +29,10 @@ export default async function downloader(ctx, bot) {
     // Send the video to the user
     ctx.replyWithVideo(
       { source: "src/temp/video.mp4" },
-      { supports_streaming: true }
+      {
+        caption: "De" + ctx.update.message.from.username,
+        supports_streaming: true,
+      }
     );
     await bot.telegram.deleteMessage(mainId, msgId);
   } catch (error) {

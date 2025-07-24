@@ -6,9 +6,6 @@ export async function all(ctx, bot) {
   let response = ""; // api response
   let command = {}; // the "all" command
 
-  // verify that the member isn't KENDRYS
-  const chatMember = await bot.telegram.getChatMember(chatId, message.from.id);
-
   // make the api request
   try {
     response = await axios.get(`${process.env.API}/command/${chatId}/all`);
@@ -43,10 +40,9 @@ export async function add(ctx) {
   const message = ctx.update.message; // message object
   const chatId = message.chat.id;
   const username = message.from.username;
-  let response = ""; // api response
 
   try {
-    response = await axios.put(
+    const response = await axios.put(
       `${process.env.API}/command/${chatId}/all/` + `@${username}`
     );
 
@@ -57,12 +53,11 @@ export async function add(ctx) {
       });
     }
   } catch (error) {
-    if (error.response.status == 304) {
+    if (error.response.data.error == "username not added") {
       ctx.reply("⚠️ *Usuario ya existe\\.*", {
         parse_mode: "MarkdownV2",
         reply_to_message_id: message.message_id,
       });
     }
-    console.log(error.response);
   }
 }

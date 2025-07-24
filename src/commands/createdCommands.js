@@ -2,6 +2,7 @@ import axios from "axios";
 import chatai from "../services/chatai.js";
 import handleCaptionCommand from "../utils/handleCaptionCommand.js";
 import handleMessageText from "../utils/handleMessageText.js";
+import sendCreatedCommand from "../utils/sendCreatedCommand.js";
 
 export default async function createdCommands(ctx, bot) {
   const message = ctx.update.message; // message object
@@ -26,34 +27,13 @@ export default async function createdCommands(ctx, bot) {
     response = await axios.get(
       `${process.env.API}/command/${chatId}/` + cmd.substring(1, cmd.length)
     );
-
     command = response.data.command;
   } catch (error) {
-    response = "command not found";
+    return;
   }
 
-  // if found
-  if (response != "command not found") {
-    switch (command.type) {
-      case "sticker":
-        stickerCommand(bot, chatId, command, message);
-        break;
+  // delete the main message
+  await bot.telegram.deleteMessage(chatId, message.message_id);
 
-      case "text":
-        textCommand(ctx, command, message);
-        break;
-    }
-  }
-}
-
-function textCommand(ctx, command, message) {
-  ctx.reply(command.command, {
-    reply_to_message_id: message.reply_to_message?.message_id,
-  });
-}
-
-function stickerCommand(bot, chatId, command, message) {
-  bot.telegram.sendSticker(chatId, command.command, {
-    reply_to_message_id: message.reply_to_message?.message_id,
-  });
+  sendCreatedCommand(bot, ctx, command);
 }

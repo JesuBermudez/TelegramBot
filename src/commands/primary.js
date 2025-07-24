@@ -62,8 +62,8 @@ export async function help(ctx, bot) {
       "__Uso__: \\- `/tr oracion`\n    \\- Responder con: `/tr` a un mensaje\n\n" +
       "   *10*\\. */coin*  \\- Conversor de divisas\\.\n" +
       "__Uso__: \\- `/coin | /coin EUR | /coin 10 | /coin EUR 10` \n\n" +
-      "   *10*\\. */yt*  \\- Descargar videos de _Youtube_\\.\n" +
-      "__Uso__: \\- `/yt link-youtube` \n\n" +
+      "   *10*\\. */get*  \\- Descargar videos de _Instagram_ o _Youtube_\\.\n" +
+      "__Uso__: \\- `/get link` \n\n" +
       "🔹 *Comandos creados*:\n" +
       result,
     { parse_mode: "MarkdownV2" }
