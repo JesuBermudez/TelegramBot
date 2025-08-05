@@ -32,6 +32,6 @@ export default function chatContextCount(ctx) {
   // Returns the number of messages in the chat context
   ctx.reply(`*Context count:* ${chatContext.length}`, {
     reply_to_message_id: ctx.update.message.message_id,
-    markdown: "MarkdownV2",
+    parse_mode: "MarkdownV2",
   });
 }
