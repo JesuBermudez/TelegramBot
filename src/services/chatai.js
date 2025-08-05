@@ -15,7 +15,7 @@ export default async function chatai(ctx, txt) {
   const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
   addChatContext(txt);
 
-  if (isReplyToBot || mentionsBot || randomChance) return;
+  if (!(isReplyToBot || mentionsBot || randomChance)) return;
 
   // if the message is a reply to other message
   if (message.reply_to_message) {
