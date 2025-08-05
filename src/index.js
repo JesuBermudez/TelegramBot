@@ -12,6 +12,7 @@ import weather from "./commands/weather.js";
 import { foreignExchange } from "./commands/exchangeRate.js";
 import downloader from "./commands/ytdl.js";
 import toPdf from "./commands/toPdf.js";
+import chatContextCount from "./temp/chatContext.js";
 
 const bot = new Telegraf(process.env.token);
 
@@ -31,6 +32,7 @@ bot.command("clima", (ctx) => weather(ctx));
 bot.command("coin", (ctx) => foreignExchange(ctx));
 bot.command("get", (ctx) => downloader(ctx, bot));
 bot.command("pdf", (ctx) => toPdf(ctx, bot));
+bot.command("ctx", (ctx) => chatContextCount(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
