@@ -8,7 +8,6 @@ export default async function createdCommands(ctx, bot) {
   const message = ctx.update.message; // message object
   const { cmd, text } = handleMessageText(message); // command string and text
   const chatId = message.chat.id;
-  let response = {}; // api response
   let command = {}; // command from the api
 
   if (cmd.length <= 1 && text.length <= 1) return; // no text or caption
@@ -24,7 +23,7 @@ export default async function createdCommands(ctx, bot) {
 
   // api request
   try {
-    response = await axios.get(
+    const response = await axios.get(
       `${process.env.API}/command/${chatId}/` + cmd.substring(1, cmd.length)
     );
     command = response.data.command;

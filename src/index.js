@@ -32,7 +32,7 @@ bot.command("clima", (ctx) => weather(ctx));
 bot.command("coin", (ctx) => foreignExchange(ctx));
 bot.command("get", (ctx) => downloader(ctx, bot));
 bot.command("pdf", (ctx) => toPdf(ctx, bot));
-bot.command("ctx", (ctx) => chatContextCount(ctx));
+bot.command("ctx", (ctx) => chatContextCount(ctx, bot));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 

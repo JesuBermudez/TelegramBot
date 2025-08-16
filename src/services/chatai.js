@@ -1,10 +1,10 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import handleMessageText from "../utils/handleMessageText.js";
 import {
   addChatContext,
   chatContext,
+  formatChatContextText,
   historyContext,
-  removeChatContext,
+  parseResponse,
 } from "../temp/chatContext.js";
 
 export default async function chatai(ctx, txt) {
@@ -13,18 +13,9 @@ export default async function chatai(ctx, txt) {
   const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
   const mentionsBot = txt.includes("TeamCodersBot");
   const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
-  addChatContext(txt);
+  addChatContext(formatChatContextText(txt, message));
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
-
-  // if the message is a reply to other message
-  if (message.reply_to_message) {
-    const { text, isBot } = handleMessageText(message.reply_to_message);
-    if (text) {
-      removeChatContext(text);
-      addChatContext(text, isBot);
-    }
-  }
 
   // respond to the message
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
@@ -39,8 +30,9 @@ export default async function chatai(ctx, txt) {
     const response = result.response.text();
 
     if (!response.toLocaleLowerCase().includes("skip")) {
-      ctx.reply(response, {
-        reply_to_message_id: message.message_id,
+      const { replyId, body } = parseResponse(response);
+      ctx.reply(body, {
+        reply_to_message_id: replyId || message.message_id,
       });
       addChatContext(response, true);
     }
