@@ -3,11 +3,11 @@ export default function handleMessageText(message) {
   const textArray = text.trim().split(/\s+/);
   let cmd = textArray[0];
 
-  if (cmd.startsWith("/") && textArray.length > 1) {
+  if (cmd.startsWith("/") && cmd.length > 1) {
     text = textArray.slice(1).join(" ");
   }
 
-  if (!cmd.startsWith("/")) cmd = "";
+  if (!cmd.startsWith("/") || cmd.length == 1) cmd = "";
 
   return {
     cmd,
