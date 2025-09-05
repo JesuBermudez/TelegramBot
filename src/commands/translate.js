@@ -9,12 +9,11 @@ export default async function translator(ctx) {
 
   // translate
   try {
-    // if is reply to another message
-    if (text) {
+    if (!text) {
       traduced = await translate(text, { to: "es" });
     } else if (message.reply_to_message) {
-      const msg =
-        message.reply_to_message.text || message.reply_to_message.caption;
+      // if is reply to another message
+      const msg = handleMessageText(message.reply_to_message).text;
 
       if (!msg) return; // no message to translate
 
