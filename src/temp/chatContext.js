@@ -1,3 +1,5 @@
+import handleMessageText from "../utils/handleMessageText";
+
 export const historyContext = [
   { role: "user", parts: [{ text: process.env.CHAT_CONTEXT }] },
   {
@@ -22,6 +24,10 @@ export function addChatContext(text, isBot = false) {
 }
 
 export function formatChatContextText(text, message) {
+  return `[id:${message.message_id} | from:${message.from.first_name} @${message.from.username} | reply_to_message:${message.reply_to_message?.message_id}] \n${text}`;
+}
+
+export function handleReplyChatContext(text, message) {
   const replyId = message.reply_to_message?.message_id;
 
   if (replyId) {
@@ -39,9 +45,17 @@ export function formatChatContextText(text, message) {
       chatContext[index].parts[0].text = chatContext[
         index
       ].parts[0].text.replace("id:undefined", `id:${replyId}`);
+    } else {
+      // si no se encuentra, agregar un nuevo contexto con el id del mensaje al que responde
+      addChatContext(
+        formatChatContextText(
+          handleMessageText(message.reply_to_message).text,
+          message.reply_to_message
+        )
+      );
     }
   }
-  return `[id:${message.message_id} | from:${message.from.first_name} @${message.from.username} | reply_to_message:${replyId}] \n${text}`;
+  return formatChatContextText(text, message);
 }
 
 export function parseResponse(response) {
