@@ -1,4 +1,4 @@
-import handleMessageText from "../utils/handleMessageText";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export const historyContext = [
   { role: "user", parts: [{ text: process.env.CHAT_CONTEXT }] },
