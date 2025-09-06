@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   addChatContext,
-  chatContext,
+  chatContexts,
   formatChatContextText,
   historyContext,
   parseResponse,
@@ -9,11 +9,13 @@ import {
 
 export default async function chatai(ctx, txt) {
   const message = ctx.update.message;
+  const chatId = message.chat.id;
+
   // Validations to respond with AI
   const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
   const mentionsBot = txt.includes("TeamCodersBot");
   const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
-  addChatContext(formatChatContextText(txt, message));
+  addChatContext(chatId, formatChatContextText(txt, message));
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
 
@@ -21,7 +23,7 @@ export default async function chatai(ctx, txt) {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const chat = model.startChat({
-    history: [...historyContext, ...chatContext],
+    history: [...historyContext, ...(chatContexts[chatId] || [])],
   });
 
   // request to the Gemini API
@@ -34,7 +36,7 @@ export default async function chatai(ctx, txt) {
       ctx.reply(body, {
         reply_to_message_id: replyId || message.message_id,
       });
-      addChatContext(response, true);
+      addChatContext(chatId, response, true);
     }
   } catch (err) {
     console.error("Error con Gemini:", err);

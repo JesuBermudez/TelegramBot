@@ -12,12 +12,20 @@ export const historyContext = [
   },
 ];
 
-export const chatContext = [
+export const chatContexts = {
   // This array will hold the chat context for the AI responses
-];
+};
 
-export function addChatContext(text, isBot = false) {
-  chatContext.push({
+export function getChatContext(chatId) {
+  // Returns the chat context for a specific chatId
+  if (!chatContexts[chatId]) {
+    chatContexts[chatId] = [];
+  }
+  return chatContexts[chatId];
+}
+
+export function addChatContext(chatId, text, isBot = false) {
+  getChatContext(chatId).push({
     role: isBot ? "model" : "user",
     parts: [{ text }],
   });
@@ -27,11 +35,13 @@ export function formatChatContextText(text, message) {
   return `[id:${message.message_id} | from:${message.from.first_name} @${message.from.username} | reply_to_message:${message.reply_to_message?.message_id}] \n${text}`;
 }
 
-export function handleReplyChatContext(text, message) {
+export function handleReplyChatContext(chatId, text, message) {
   const replyId = message.reply_to_message?.message_id;
 
   if (replyId) {
-    const index = chatContext.findIndex((item) => {
+    const groupContext = getChatContext(chatId);
+
+    const index = groupContext.findIndex((item) => {
       const header = item.parts[0].text.split("\n")[0]; // primera línea
       return (
         // es mensaje del modelo, tiene el .text del mensaje al que responde y el header contiene "id:undefined"
@@ -40,14 +50,16 @@ export function handleReplyChatContext(text, message) {
         header.includes("id:undefined")
       );
     });
+
     if (index !== -1) {
       // reemplazar el id en el header por el id del message al que responde
-      chatContext[index].parts[0].text = chatContext[
+      groupContext[index].parts[0].text = groupContext[
         index
       ].parts[0].text.replace("id:undefined", `id:${replyId}`);
     } else {
       // si no se encuentra, agregar un nuevo contexto con el id del mensaje al que responde
       addChatContext(
+        chatId,
         formatChatContextText(
           handleMessageText(message.reply_to_message).text,
           message.reply_to_message
@@ -74,7 +86,9 @@ export default async function chatContextCount(ctx, bot) {
 
   await bot.telegram.deleteMessage(chatId, mainId);
 
-  ctx.reply(`*Context count:* ${chatContext.length}`, {
+  const count = getChatContext(chatId).length;
+
+  ctx.reply(`*Context count:* ${count}`, {
     parse_mode: "MarkdownV2",
   });
 }
