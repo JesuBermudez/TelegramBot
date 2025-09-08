@@ -9,7 +9,7 @@ export default async function translator(ctx) {
 
   // translate
   try {
-    if (!text) {
+    if (text) {
       traduced = await translate(text, { to: "es" });
     } else if (message.reply_to_message) {
       // if is reply to another message
