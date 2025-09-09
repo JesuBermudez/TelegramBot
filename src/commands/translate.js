@@ -17,7 +17,7 @@ export default async function translator(ctx) {
 
       if (!msg) return; // no message to translate
 
-      traduced = await translate(message.reply_to_message.text, { to: "es" });
+      traduced = await translate(msg, { to: "es" });
       replyId = message.reply_to_message.message_id;
     } else {
       return;
