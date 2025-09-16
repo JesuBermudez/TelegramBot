@@ -84,7 +84,9 @@ export default async function chatContextCount(ctx, bot) {
   const mainId = ctx.update.message.message_id;
   const chatId = ctx.update.message.chat.id;
 
-  await bot.telegram.deleteMessage(chatId, mainId);
+  try {
+    await bot.telegram.deleteMessage(chatId, mainId);
+  } catch (error) {}
 
   const count = getChatContext(chatId).length;
 

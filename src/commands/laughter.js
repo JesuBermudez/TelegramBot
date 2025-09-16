@@ -10,7 +10,11 @@ export default async function laughter(ctx, bot) {
   let extra = ""; // extra message
 
   // delete the main message
-  await bot.telegram.deleteMessage(chatId, mainId);
+  try {
+    await bot.telegram.deleteMessage(chatId, mainId);
+  } catch (_) {
+    console.error("Failed to delete message:");
+  }
 
   // if is replying to another message
   if (ctx.update.message.hasOwnProperty("reply_to_message")) {

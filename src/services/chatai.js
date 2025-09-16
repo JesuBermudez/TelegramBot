@@ -39,6 +39,6 @@ export default async function chatai(ctx, txt) {
       addChatContext(chatId, response, true);
     }
   } catch (err) {
-    console.error("Error con Gemini:", err);
+    console.error("Error con Gemini: ", err);
   }
 }

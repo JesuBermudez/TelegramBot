@@ -18,23 +18,16 @@ export default async function weather(ctx) {
         },
       }
     );
-    response = data;
+    response =
+      `*${data.location.name} / ${data.location.localtime.split(" ")[1]}*\n` +
+      `🌡 *${Math.round(data.current.temp_c)}°*\n` +
+      `*FeelsLike: ${Math.round(data.current.feelslike_c)}°*`;
   } catch (error) {
-    response = "api error";
+    response = "Error fetching weather data: " + error.message;
   }
 
-  // if an error occurred
-  if (response == "api error") return;
-
-  ctx.reply(
-    `*${response.location.name} / ${
-      response.location.localtime.split(" ")[1]
-    }*\n` +
-      `🌡 *${Math.round(response.current.temp_c)}°*\n` +
-      `*FeelsLike: ${Math.round(response.current.feelslike_c)}°*`,
-    {
-      reply_to_message_id: messageId,
-      parse_mode: "MarkdownV2",
-    }
-  );
+  ctx.reply(response, {
+    reply_to_message_id: messageId,
+    parse_mode: "MarkdownV2",
+  });
 }

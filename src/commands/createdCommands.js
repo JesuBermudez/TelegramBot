@@ -28,15 +28,14 @@ export default async function createdCommands(ctx, bot) {
     );
     command = response.data.command;
   } catch (error) {
+    console.error(error);
     return;
   }
 
   // delete the main message
   try {
     await bot.telegram.deleteMessage(chatId, message.message_id);
-  } catch (error) {
-    console.error("Failed to delete message:");
-  }
+  } catch (error) {}
 
   sendCreatedCommand(bot, ctx, command);
 }

@@ -41,7 +41,9 @@ export default async function purge(ctx, bot) {
   const firstId = ctx.update.message.reply_to_message.message_id;
 
   // delete the main message
-  bot.telegram.deleteMessage(chatId, lastId);
+  try {
+    bot.telegram.deleteMessage(chatId, lastId);
+  } catch (error) {}
 
   // delete by id
   deleteMessages(bot, chatId, firstId, lastId);
@@ -54,8 +56,6 @@ async function deleteMessages(bot, chatId, firstId, lastId) {
     }
     try {
       await bot.telegram.deleteMessage(chatId, i);
-    } catch (err) {
-      console.log(`No se pudo eliminar el mensaje con el ID ${i}: ${err}`);
-    }
+    } catch (e) {}
   }
 }

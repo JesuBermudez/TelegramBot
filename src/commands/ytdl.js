@@ -8,7 +8,7 @@ export default async function downloader(ctx, bot) {
   const mainId = ctx.update.message.chat.id;
   const msgId = ctx.update.message.message_id;
 
-  if (!messageContent[0].length > 22) {
+  if (!(messageContent[0].length > 22)) {
     ctx.reply("⚠ Enlace no valido.", {
       reply_to_message_id: msgId,
     });
@@ -39,8 +39,11 @@ export default async function downloader(ctx, bot) {
     );
     await bot.telegram.deleteMessage(mainId, msgId);
   } catch (error) {
-    ctx.reply("⚠ Error al descargar el video.", {
-      reply_to_message_id: msgId,
-    });
+    ctx.reply(
+      `⚠ Error al descargar el video. (Error: ${error.response.statusText})`,
+      {
+        reply_to_message_id: msgId,
+      }
+    );
   }
 }

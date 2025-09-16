@@ -27,6 +27,8 @@ export default async function translator(ctx) {
       reply_to_message_id: replyId,
     });
   } catch (error) {
-    console.log(error);
+    ctx.reply(error, {
+      reply_to_message_id: replyId,
+    });
   }
 }
