@@ -33,6 +33,11 @@ export async function fetchUrlAsString(ctx) {
     response = `Request failed: ${err.message}`;
   }
 
+  // cortar si es demasiado largo
+  if (response.length > 4000) {
+    response = response.slice(0, 4000) + "\n\n...[truncated]";
+  }
+
   // delete the main message
   try {
     await bot.telegram.deleteMessage(chatId, message.message_id);
