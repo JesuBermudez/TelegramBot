@@ -28,7 +28,9 @@ export default async function createdCommands(ctx, bot) {
     );
     command = response.data.command;
   } catch (error) {
-    console.error(error);
+    ctx.reply(error.response?.data?.error || error.message, {
+      reply_to_message_id: message.message_id,
+    });
     return;
   }
 
