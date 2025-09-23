@@ -13,6 +13,7 @@ import { foreignExchange } from "./commands/exchangeRate.js";
 import downloader from "./commands/ytdl.js";
 import toPdf from "./commands/toPdf.js";
 import chatContextCount from "./temp/chatContext.js";
+import { fetchUrlAsString } from "./commands/fetchUrl.js";
 
 const bot = new Telegraf(process.env.token);
 
@@ -33,12 +34,13 @@ bot.command("coin", (ctx) => foreignExchange(ctx));
 bot.command("get", (ctx) => downloader(ctx, bot));
 bot.command("pdf", (ctx) => toPdf(ctx, bot));
 bot.command("ctx", (ctx) => chatContextCount(ctx, bot));
+bot.command("fetch", (ctx) => fetchUrlAsString(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  webhook: {
-    domain: process.env.DOMAIN,
-    port: process.env.PORT,
-  },
+  // webhook: {
+  //   domain: process.env.DOMAIN,
+  //   port: process.env.PORT,
+  // },
 });
