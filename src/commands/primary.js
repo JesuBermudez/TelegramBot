@@ -64,6 +64,8 @@ export async function help(ctx, bot) {
       "__Uso__: \\- `/coin | /coin EUR | /coin 10 | /coin EUR 10` \n\n" +
       "   *10*\\. */get*  \\- Descargar videos de _Instagram_ o _Youtube_\\.\n" +
       "__Uso__: \\- `/get link` \n\n" +
+      "   *12*\\. */fetch*  \\- Hace una petición a una URL y devuelve la respuesta o el error\\.\n" +
+      "__Uso__: \\- `/fetch https://ejemplo.com/api` \n\n" +
       "🔹 *Comandos creados*:\n" +
       result,
     { parse_mode: "MarkdownV2" }
