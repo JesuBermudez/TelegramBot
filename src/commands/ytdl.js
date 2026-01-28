@@ -21,7 +21,7 @@ export default async function downloader(ctx, bot) {
       `${process.env.DOWNLOADER_API}${messageContent[0]}`,
       {
         responseType: "arraybuffer",
-      }
+      },
     );
 
     fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
@@ -35,15 +35,16 @@ export default async function downloader(ctx, bot) {
           .join(" ")}`,
         parse_mode: "MarkdownV2",
         supports_streaming: true,
-      }
+      },
     );
     await bot.telegram.deleteMessage(mainId, msgId);
   } catch (error) {
+    console.log("Error downloading video: ", error);
     ctx.reply(
       `⚠ Error al descargar el video. (Error: ${error.response.statusText})`,
       {
         reply_to_message_id: msgId,
-      }
+      },
     );
   }
 }

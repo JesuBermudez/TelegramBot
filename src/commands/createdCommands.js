@@ -14,7 +14,7 @@ export default async function createdCommands(ctx, bot) {
 
   // bot gives an AI response
   if (!cmd) {
-    chatai(ctx, text);
+    // chatai(ctx, text); // closed until further notice
     return;
   }
 
@@ -24,7 +24,7 @@ export default async function createdCommands(ctx, bot) {
   // api request
   try {
     const response = await axios.get(
-      `${process.env.API}/command/${chatId}/` + cmd.substring(1, cmd.length)
+      `${process.env.API}/command/${chatId}/` + cmd.substring(1, cmd.length),
     );
     command = response.data.command;
   } catch (error) {
