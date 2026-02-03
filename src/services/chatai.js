@@ -1,10 +1,11 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import axios from "axios";
 import {
   addChatContext,
   chatContexts,
   formatChatContextText,
   historyContext,
   parseResponse,
+  chatContextToString,
 } from "../temp/chatContext.js";
 
 export default async function chatai(ctx, txt) {
@@ -19,26 +20,41 @@ export default async function chatai(ctx, txt) {
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
 
-  // respond to the message
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-  const chat = model.startChat({
-    history: [...historyContext, ...(chatContexts[chatId] || [])],
-  });
+  // chat context history
+  const historyString = chatContextToString([
+    ...historyContext,
+    ...(chatContexts[chatId] || []),
+  ]);
 
-  // request to the Gemini API
+  // request to the AI API
   try {
-    const result = await chat.sendMessage(txt);
-    const response = result.response.text();
+    const result = await axios.post(`${process.env.AI_API}/chat`, {
+      messages: [
+        {
+          role: "user",
+          content: `
+            Este es el historial del chat (léelo como contexto, no lo repitas):
+
+            ${historyString}
+
+            Mensaje actual:
+            ${txt}`,
+        },
+      ],
+    });
+
+    const response = result.data;
 
     if (!response.toLocaleLowerCase().includes("skip")) {
       const { replyId, body } = parseResponse(response);
+
       ctx.reply(body, {
         reply_to_message_id: replyId || message.message_id,
       });
+
       addChatContext(chatId, response, true);
     }
   } catch (err) {
-    console.error("Error con Gemini: ", err);
+    console.error("Error en ChatAI: ", err);
   }
 }

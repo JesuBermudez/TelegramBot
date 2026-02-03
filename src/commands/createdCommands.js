@@ -14,7 +14,7 @@ export default async function createdCommands(ctx, bot) {
 
   // bot gives an AI response
   if (!cmd) {
-    // chatai(ctx, text); // closed until further notice
+    chatai(ctx, text); // closed until further notice
     return;
   }
 
