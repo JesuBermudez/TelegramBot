@@ -1,6 +1,6 @@
-import axios from "axios";
 import fs from "fs";
 import handleMessageText from "../utils/handleMessageText.js";
+import { fetchWithRetry } from "../utils/fetchWithRetray.js";
 
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx.update.message); // command string and text
@@ -17,17 +17,14 @@ export default async function downloader(ctx, bot) {
 
   try {
     // Download the video using the downloader API
-    const response = await axios.get(
+    const response = await fetchWithRetry(
       `${process.env.DOWNLOADER_API}${messageContent[0]}`,
-      {
-        responseType: "arraybuffer",
-      },
     );
 
     fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
 
     // Send the video to the user
-    ctx.replyWithVideo(
+    await ctx.replyWithVideo(
       { source: "src/temp/video.mp4" },
       {
         caption: `*_${ctx.update.message.from.username}_*: ${messageContent
@@ -37,14 +34,24 @@ export default async function downloader(ctx, bot) {
         supports_streaming: true,
       },
     );
-    await bot.telegram.deleteMessage(mainId, msgId);
+
+    try {
+      await bot.telegram.deleteMessage(mainId, msgId);
+    } catch (deleteError) {}
   } catch (error) {
-    console.log("Error downloading video: ", error);
-    ctx.reply(
-      `⚠ Error al descargar el video. (Error: ${error.response.statusText})`,
-      {
+    let errorMsg = "⚠ Error al descargar el video.";
+
+    if (error.code === "ECONNABORTED") {
+      errorMsg =
+        "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
+    } else if (error.response) {
+      errorMsg += `\nServidor: ${error.response.status}`;
+    }
+
+    try {
+      await ctx.reply(errorMsg, {
         reply_to_message_id: msgId,
-      },
-    );
+      });
+    } catch (replyError) {}
   }
 }
