@@ -1,6 +1,7 @@
 import fs from "fs";
 import handleMessageText from "../utils/handleMessageText.js";
 import { fetchWithRetry } from "../utils/fetchWithRetray.js";
+import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx.update.message); // command string and text
@@ -27,9 +28,9 @@ export default async function downloader(ctx, bot) {
     await ctx.replyWithVideo(
       { source: "src/temp/video.mp4" },
       {
-        caption: `*_${ctx.update.message.from.username}_*: ${messageContent
-          .slice(1)
-          .join(" ")}`,
+        caption: `*_${escapeMarkdownV2(ctx.update.message.from.username)}_*: ${escapeMarkdownV2(
+          messageContent.slice(1).join(" "),
+        )}`,
         parse_mode: "MarkdownV2",
         supports_streaming: true,
       },
@@ -39,13 +40,14 @@ export default async function downloader(ctx, bot) {
       await bot.telegram.deleteMessage(mainId, msgId);
     } catch (deleteError) {}
   } catch (error) {
+    // console.log(error);
     let errorMsg = "⚠ Error al descargar el video.";
 
     if (error.code === "ECONNABORTED") {
       errorMsg =
         "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
     } else if (error.response) {
-      errorMsg += `\nServidor: ${error.response.status}`;
+      errorMsg += `\nServidor: ${error.response}`;
     }
 
     try {
