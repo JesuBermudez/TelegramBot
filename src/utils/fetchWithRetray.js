@@ -4,7 +4,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function fetchWithRetry(url, retries = 2, delay = 3000) {
+export async function fetchWithRetry(url, retries = 3, delay = 3000) {
   for (let i = 0; i <= retries; i++) {
     try {
       return await axios.get(url, {
@@ -20,7 +20,7 @@ export async function fetchWithRetry(url, retries = 2, delay = 3000) {
         continue;
       }
 
-      throw error; // si no es timeout o ya no quedan intentos
+      console.log("Error final:", error); // si no es timeout o ya no quedan intentos
     }
   }
 }
