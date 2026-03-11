@@ -55,6 +55,9 @@ export default async function chatai(ctx, txt) {
       addChatContext(chatId, response, true);
     }
   } catch (err) {
-    // console.error("Error en ChatAI: ", err);
+    console.log(
+      "Error en ChatAI: ",
+      err.response?.data || err.message || "Internal error",
+    );
   }
 }
