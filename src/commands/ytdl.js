@@ -10,10 +10,12 @@ export default async function downloader(ctx, bot) {
   const msgId = ctx.update.message.message_id;
 
   if (!(messageContent[0].length > 22)) {
-    ctx.reply("⚠ Enlace no valido.", {
-      reply_to_message_id: msgId,
-    });
-    return;
+    try {
+      ctx.reply("⚠ Enlace no valido.", {
+        reply_to_message_id: msgId,
+      });
+      return;
+    } catch (error) {}
   }
 
   try {
@@ -40,7 +42,7 @@ export default async function downloader(ctx, bot) {
       await bot.telegram.deleteMessage(mainId, msgId);
     } catch (deleteError) {}
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     let errorMsg = "⚠ Error al descargar el video.";
 
     if (error.code === "ECONNABORTED") {
