@@ -21,7 +21,7 @@ export default async function downloader(ctx, bot) {
   try {
     // Download the video using the downloader API
     const response = await fetchWithRetry(
-      `${process.env.DOWNLOADER_API}${messageContent[0]}`,
+      `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${messageContent[0]}`,
     );
 
     fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
