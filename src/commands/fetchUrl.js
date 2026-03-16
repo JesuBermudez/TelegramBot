@@ -1,10 +1,5 @@
 import axios from "axios";
 
-/**
- * Hace una petición GET a la URL indicada y retorna data o error como string.
- * @param {string} url - URL a la que se hará la petición
- * @returns {Promise<string>}
- */
 export async function fetchUrlAsString(ctx) {
   const chatId = ctx.update.message.chat.id;
   const message = ctx.update.message;
@@ -13,7 +8,7 @@ export async function fetchUrlAsString(ctx) {
 
   if (!url || !/^https?:\/\//i.test(url)) {
     ctx.reply(
-      "Por favor, proporciona una URL válida que comience con http:// o https://"
+      "Por favor, proporciona una URL válida que comience con http:// o https://",
     );
     return;
   }
@@ -22,10 +17,22 @@ export async function fetchUrlAsString(ctx) {
     response = await axios.get(url, {
       responseType: "text",
       validateStatus: () => true,
+      headers: {
+        "User-Agent": "curl/8.7.1",
+        Accept: "*/*",
+      },
     });
 
     if (response.status >= 200 && response.status < 300) {
-      response = JSON.stringify(JSON.parse(response.data.toString()), null, 2);
+      try {
+        response = JSON.stringify(
+          JSON.parse(response.data.toString()),
+          null,
+          2,
+        );
+      } catch {
+        response = response.data.toString();
+      }
     } else {
       response = `Error ${response.status}: ${response.statusText}\n${response.data}`;
     }
