@@ -42,14 +42,13 @@ export default async function downloader(ctx, bot) {
       await bot.telegram.deleteMessage(mainId, msgId);
     } catch (deleteError) {}
   } catch (error) {
-    console.log(error);
     let errorMsg = "⚠ Error al descargar el video.";
 
     if (error.code === "ECONNABORTED") {
       errorMsg =
         "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
     } else if (error.response) {
-      errorMsg += `\nServidor: ${error.response}`;
+      errorMsg += `\nServidor: ${error.response.response.description}`;
     }
 
     try {

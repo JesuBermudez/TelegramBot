@@ -22,9 +22,6 @@ export default function handleCaptionCommand(ctx, bot, commandString) {
     case "/coin":
       foreignExchange(ctx);
       break;
-    case "/get":
-      downloader(ctx, bot);
-      break;
     default:
       return false; // no caption command
   }
