@@ -1,33 +1,52 @@
 import axios from "axios";
+import handleMessageText from "../utils/handleMessageText.js";
 
 export default async function weather(ctx) {
-  let response = {};
+  let response = "";
   const messageId = ctx.update.message.message_id;
+  const { text } = handleMessageText(ctx.update.message);
+  const city = text.trim().split(" ")[0] || "Valledupar";
 
   // make the request to the api
   try {
     const { data } = await axios.get(
-      "https://weatherapi-com.p.rapidapi.com/current.json",
+      `https://wttr.in/${city}?format=%22%l+/+%T%5Cn+%c%t%5Cn+FeelsLike:+%f%22`,
       {
-        params: {
-          q: "10.4626644,-73.2544279",
-        },
+        responseType: "text",
+        validateStatus: () => true,
         headers: {
-          "X-RapidAPI-Key": process.env.WEATHER_API,
-          "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com",
+          "User-Agent": "curl/8.7.1",
+          Accept: "*/*",
         },
-      }
+      },
     );
-    response =
-      `*${data.location.name} / ${data.location.localtime.split(" ")[1]}*\n` +
-      `🌡 *${Math.round(data.current.temp_c)}°*\n` +
-      `*FeelsLike: ${Math.round(data.current.feelslike_c)}°*`;
+    response = formatWeather(data);
   } catch (error) {
     response = "Error fetching weather data: " + error.message;
   }
 
-  ctx.reply(response, {
+  ctx.reply(`*${response}*`, {
     reply_to_message_id: messageId,
     parse_mode: "MarkdownV2",
   });
+}
+
+function formatWeather(str) {
+  // quitar comillas externas si las tiene
+  str = str.replace(/^"|"$/g, "");
+
+  return (
+    str
+      // hora: extraer HH:MM y convertir a 12h  (ej: 17:29:44-0500 -> 5:29 PM)
+      .replace(/(\d{2}):(\d{2}):\d{2}[+-]\d{4}/, (_, hh, mm) => {
+        const h = parseInt(hh);
+        const suffix = h >= 12 ? "PM" : "AM";
+        const h12 = h % 12 || 12;
+        return `${h12}:${mm} ${suffix}`;
+      })
+      // quitar los "+"
+      .replace(/\+/g, "")
+      // primera letra en mayúscula
+      .replace(/^./, (c) => c.toUpperCase())
+  );
 }
