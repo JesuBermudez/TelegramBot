@@ -9,7 +9,7 @@ export default async function alias(ctx) {
     // message hasn't a command name
     ctx.reply(
       "*Atención:* Por favor introduce el nombre del comando despues de /alias\nPor ejemplo: `/alias command`\n\n*\\(No te olvides de responder al mensaje que quieres que se mande al ejecutar el comando creado\\)*",
-      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id }
+      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id },
     );
     return;
   }
@@ -17,7 +17,7 @@ export default async function alias(ctx) {
   if (!/^[a-zA-Z0-9]+$/.test(payload[0])) {
     ctx.reply(
       "*Atención:* El nombre del comando solo puede contener letras y números, nada de caracteres especiales",
-      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id }
+      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id },
     );
     return;
   }
@@ -25,7 +25,7 @@ export default async function alias(ctx) {
   if (!message.reply_to_message) {
     ctx.reply(
       "*Atención:* Por favor, no te olvides de responder al mensaje que quieres que se mande al ejecutar el comando creado",
-      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id }
+      { parse_mode: "MarkdownV2", reply_to_message_id: message.message_id },
     );
     return;
   }
@@ -44,12 +44,12 @@ export default async function alias(ctx) {
   // add the command
   try {
     const response = await axios.post(
-      process.env.API + "/command/" + message.chat.id,
+      `${process.env.BOT_API}/command/${message.chat.id}`,
       {
         ...command,
         name: payload[0],
         creator: message.from.username,
-      }
+      },
     );
 
     if (response.data.message == "Command Created") {

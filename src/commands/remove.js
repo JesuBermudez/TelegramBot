@@ -11,7 +11,7 @@ export default async function remove(ctx, bot) {
   if (payload.length < 1) {
     ctx.reply(
       "⚠ *Atención:* Por favor introduce el nombre del comando despues de /remove\nPor ejemplo: `/remove command`",
-      { parse_mode: "MarkdownV2", reply_to_message_id: messageId }
+      { parse_mode: "MarkdownV2", reply_to_message_id: messageId },
     );
     return;
   }
@@ -19,7 +19,7 @@ export default async function remove(ctx, bot) {
   // verify that the member is an admin
   const chatMember = await bot.telegram.getChatMember(
     chatId,
-    ctx.update.message.from.id
+    ctx.update.message.from.id,
   );
 
   // user role
@@ -30,12 +30,12 @@ export default async function remove(ctx, bot) {
   // api request
   try {
     response = await axios.delete(
-      `${process.env.API}/command/${chatId}/${user}/${role}`,
+      `${process.env.BOT_API}/command/${chatId}/${user}/${role}`,
       {
         data: {
           name: payload[0],
         },
-      }
+      },
     );
 
     // command deleted

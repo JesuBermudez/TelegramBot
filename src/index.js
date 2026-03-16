@@ -15,7 +15,7 @@ import toPdf from "./commands/toPdf.js";
 import chatContextCount from "./temp/chatContext.js";
 import { fetchUrlAsString } from "./commands/fetchUrl.js";
 
-const bot = new Telegraf(process.env.token);
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 // todo: functions
 bot.start((ctx) => start(ctx));
