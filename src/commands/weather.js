@@ -10,7 +10,7 @@ export default async function weather(ctx) {
   // make the request to the api
   try {
     const { data } = await axios.get(
-      `https://wttr.in/${city}?format=%22%l+/+%T%5Cn+%c%t%5Cn+FeelsLike:+%f%22`,
+      `https://wttr.in/${city}?m&format=%22%l+/+%T%5Cn+%c%t%5Cn+FeelsLike:+%f%22`,
       {
         responseType: "text",
         validateStatus: () => true,
