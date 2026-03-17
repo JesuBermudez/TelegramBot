@@ -1,5 +1,6 @@
 import axios from "axios";
 import handleMessageText from "../utils/handleMessageText.js";
+import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
 export default async function weather(ctx) {
   let response = "";
@@ -25,7 +26,7 @@ export default async function weather(ctx) {
     response = "Error fetching weather data: " + error.message;
   }
 
-  ctx.reply(`*${response}*`, {
+  ctx.reply(`*${escapeMarkdownV2(response)}*`, {
     reply_to_message_id: messageId,
     parse_mode: "MarkdownV2",
   });
