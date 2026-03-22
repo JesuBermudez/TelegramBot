@@ -48,7 +48,7 @@ export default async function downloader(ctx, bot) {
       errorMsg =
         "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
     } else if (error.response) {
-      errorMsg += `\nServidor: ${error.response.response.description}`;
+      errorMsg += `\nServidor: ${error.response.status} ${error.response.statusText}`;
     }
 
     try {
