@@ -20,7 +20,7 @@ export async function fetchWithRetry(url, retries = 3, delay = 3000) {
         continue;
       }
 
-      console.log("Error final:", error); // si no es timeout o ya no quedan intentos
+      throw error;
     }
   }
 }
