@@ -18,47 +18,55 @@ export default async function downloader(ctx, bot) {
     } catch (error) {}
   }
 
-  try {
-    // Download the video using the downloader API
-    const response = await fetchWithRetry(
-      `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${messageContent[0]}`,
-    );
+  const loadingMsg = await ctx.reply("⏳ Descargando...");
 
-    fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
-
-    // Send the video to the user
-    await ctx.replyWithVideo(
-      { source: "src/temp/video.mp4" },
-      {
-        caption: `*_${escapeMarkdownV2(ctx.update.message.from.username)}_*: ${escapeMarkdownV2(
-          messageContent.slice(1).join(" "),
-        )}`,
-        parse_mode: "MarkdownV2",
-        supports_streaming: true,
-      },
-    );
-
+  setImmediate(async () => {
     try {
-      await bot.telegram.deleteMessage(mainId, msgId);
-    } catch (deleteError) {}
-  } catch (error) {
-    let errorMsg = "⚠ Error al descargar el video.";
+      // Download the video using the downloader API
+      const response = await fetchWithRetry(
+        `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${messageContent[0]}`,
+      );
 
-    if (error.code === "ECONNABORTED") {
-      errorMsg =
-        "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
-    } else if (error.response) {
-      if (error.response.description) {
-        errorMsg += `\nTelegram: ${error.response.error_code} ${error.response.description}`;
-      } else {
-        errorMsg += `\nServidor: ${error.response.status} ${error.response.statusText}`;
+      await bot.telegram.editMessageText(mainId, loadingMsg.message_id, null, "⚙ Procesando...");
+      fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
+
+      // Send the video to the user
+      await bot.telegram.editMessageText(mainId, loadingMsg.message_id, null, "📤 Enviando...");
+      await ctx.replyWithVideo(
+        { source: "src/temp/video.mp4" },
+        {
+          caption: `*_${escapeMarkdownV2(ctx.update.message.from.username)}_*: ${escapeMarkdownV2(
+            messageContent.slice(1).join(" "),
+          )}`,
+          parse_mode: "MarkdownV2",
+          supports_streaming: true,
+        },
+      );
+
+      try {
+        await bot.telegram.deleteMessage(mainId, loadingMsg.message_id);
+        await bot.telegram.deleteMessage(mainId, msgId);
+      } catch (deleteError) {}
+    } catch (error) {
+      let errorMsg = "⚠ Error al descargar el video.";
+
+      if (error.code === "ECONNABORTED") {
+        errorMsg =
+          "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
+      } else if (error.response) {
+        if (error.response.description) {
+          errorMsg += `\nTelegram: ${error.response.error_code} ${error.response.description}`;
+        } else {
+          errorMsg += `\nServidor: ${error.response.status} ${error.response.statusText}`;
+        }
       }
+
+      try {
+        await ctx.reply(errorMsg, {
+          reply_to_message_id: msgId,
+        });
+      } catch (replyError) {}
     }
 
-    try {
-      await ctx.reply(errorMsg, {
-        reply_to_message_id: msgId,
-      });
-    } catch (replyError) {}
-  }
+  });
 }
