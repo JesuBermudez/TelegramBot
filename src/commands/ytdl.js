@@ -27,11 +27,21 @@ export default async function downloader(ctx, bot) {
         `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${messageContent[0]}`,
       );
 
-      await bot.telegram.editMessageText(mainId, loadingMsg.message_id, null, "⚙ Procesando...");
+      await bot.telegram.editMessageText(
+        mainId,
+        loadingMsg.message_id,
+        null,
+        "⚙ Procesando...",
+      );
       fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
 
       // Send the video to the user
-      await bot.telegram.editMessageText(mainId, loadingMsg.message_id, null, "📤 Enviando...");
+      await bot.telegram.editMessageText(
+        mainId,
+        loadingMsg.message_id,
+        null,
+        "📤 Enviando...",
+      );
       await ctx.replyWithVideo(
         { source: "src/temp/video.mp4" },
         {
@@ -44,7 +54,6 @@ export default async function downloader(ctx, bot) {
       );
 
       try {
-        await bot.telegram.deleteMessage(mainId, loadingMsg.message_id);
         await bot.telegram.deleteMessage(mainId, msgId);
       } catch (deleteError) {}
     } catch (error) {
@@ -68,5 +77,6 @@ export default async function downloader(ctx, bot) {
       } catch (replyError) {}
     }
 
+    await bot.telegram.deleteMessage(mainId, loadingMsg.message_id);
   });
 }
