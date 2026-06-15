@@ -1,3 +1,3 @@
 export function escapeMarkdownV2(text = "") {
-  return text.replace(/[.\-()|{}!#,[\]~>+]/g, "\\$&");
+  return String(text).replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
 }

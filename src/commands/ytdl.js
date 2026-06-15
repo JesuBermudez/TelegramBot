@@ -45,7 +45,7 @@ export default async function downloader(ctx, bot) {
       await ctx.replyWithVideo(
         { source: "src/temp/video.mp4" },
         {
-          caption: `*_${escapeMarkdownV2(ctx.update.message.from.username)}_*: ${escapeMarkdownV2(
+          caption: `*${escapeMarkdownV2(ctx.update.message.from.username)}*: ${escapeMarkdownV2(
             messageContent.slice(1).join(" "),
           )}`,
           parse_mode: "MarkdownV2",

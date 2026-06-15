@@ -12,12 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.24.0",
-    "@vitalets/google-translate-api": "^9.2.0",
-    "axios": "^1.6.5",
-    "dotenv": "^16.3.1",
-    "form-data": "^4.0.2",
-    "telegraf": "^4.15.3",
+    "@google/generative-ai": "^0.24.1",
+    "@vitalets/google-translate-api": "^9.2.1",
+    "axios": "^1.16.1",
+    "dotenv": "^17.4.2",
+    "form-data": "^4.0.5",
+    "telegraf": "^4.16.3",
     "ytdl-core": "^4.11.5"
   }
 }

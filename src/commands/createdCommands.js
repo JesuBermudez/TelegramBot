@@ -10,6 +10,10 @@ export default async function createdCommands(ctx, bot) {
   const chatId = message.chat.id;
   let command = {}; // command from the api
 
+  // bot.telegram.setMessageReaction(chatId, message.message_id, [
+  //   { type: "emoji", emoji: "👍" },
+  // ]);
+
   if (cmd.length <= 1 && text.length <= 1) return; // no text or caption
 
   // bot gives an AI response
