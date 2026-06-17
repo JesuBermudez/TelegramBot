@@ -15,7 +15,7 @@ export default async function chatai(ctx, txt) {
   // Validations to respond with AI
   const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
   const mentionsBot = txt.includes("TeamCodersBot");
-  const randomChance = Math.floor(Math.random() * 100 + 1) <= 4;
+  const randomChance = Math.floor(Math.random() * 100 + 1) <= 10; // 10% chance to respond randomly
   addChatContext(chatId, formatChatContextText(txt, message));
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
@@ -59,5 +59,6 @@ export default async function chatai(ctx, txt) {
       "Error en ChatAI: ",
       err.response?.data || err.message || "Internal error",
     );
+    console.log(err.response);
   }
 }
