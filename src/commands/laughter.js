@@ -6,7 +6,7 @@ export default async function laughter(ctx, bot) {
 
   let count = 24; // number of characters
   let result = ""; // final result
-  let replyId = false; // id of the message that is replying to
+  let replyId = undefined; // id of the message that is replying to
   let extra = ""; // extra message
 
   // delete the main message
@@ -63,11 +63,7 @@ export default async function laughter(ctx, bot) {
   }
 
   // send the message
-  if (replyId) {
-    ctx.reply(`De: @${user}, ${extra} ${result}`, {
-      reply_to_message_id: replyId,
-    });
-  } else {
-    ctx.reply(`De: @${user}, ${extra} ${result}`);
-  }
+  ctx.reply(`De: @${user}, ${extra} ${result}`, {
+    reply_to_message_id: replyId,
+  });
 }

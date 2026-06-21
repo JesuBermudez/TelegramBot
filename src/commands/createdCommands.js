@@ -10,15 +10,16 @@ export default async function createdCommands(ctx, bot) {
   const chatId = message.chat.id;
   let command = {}; // command from the api
 
-  // bot.telegram.setMessageReaction(chatId, message.message_id, [
-  //   { type: "emoji", emoji: "👍" },
-  // ]);
-
-  if (cmd.length <= 1 && text.length <= 1) return; // no text or caption
+  // no text or caption
+  if (cmd.length <= 1 && text.length <= 1) {
+    bot.telegram.setMessageReaction(chatId, message.message_id, [
+      { type: "emoji", emoji: "🤨" },
+    ]);
+  }
 
   // bot gives an AI response
   if (!cmd) {
-    chatai(ctx, text); // closed until further notice
+    chatai(ctx, text);
     return;
   }
 
@@ -28,15 +29,24 @@ export default async function createdCommands(ctx, bot) {
   // api request
   try {
     const response = await axios.get(
-      `${process.env.BOT_API}/command/${chatId}/` +
-        cmd.substring(1, cmd.length),
+      `${process.env.BOT_API}/command/${chatId}${cmd}`,
     );
+
     command = response.data.command;
   } catch (error) {
+    if (error.status === 404) {
+      bot.telegram.setMessageReaction(chatId, message.message_id, [
+        { type: "emoji", emoji: "🤷‍♂️" },
+      ]);
+      return;
+    }
+
     ctx.reply(
       error.response?.data?.error ||
-        `${error.response?.statusText} ${error.response?.status}` ||
-        error.message,
+        (error.response?.statusText &&
+          `$${error.response?.statusText} ${error.response?.status}`) ||
+        error.message ||
+        "Servidor no disponible",
       {
         reply_to_message_id: message.message_id,
       },

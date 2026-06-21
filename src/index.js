@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Telegraf } from "telegraf";
-import { start, help } from "./commands/primary.js";
+import { start, help, commandsList } from "./commands/primary.js";
 import { all, add } from "./commands/mention.js";
 import alias from "./commands/alias.js";
 import remove from "./commands/remove.js";
@@ -25,6 +25,7 @@ bot.help((ctx) => help(ctx, bot));
 bot.command("all", (ctx) => all(ctx, bot));
 bot.command("add", (ctx) => add(ctx));
 bot.command("alias", (ctx) => alias(ctx));
+bot.command("commands", (ctx) => commandsList(ctx, bot));
 bot.command("remove", (ctx) => remove(ctx, bot));
 bot.command("purge", (ctx) => purge(ctx, bot));
 bot.command("risa", (ctx) => laughter(ctx, bot));
@@ -39,8 +40,8 @@ bot.command("fetch", (ctx) => fetchUrlAsString(ctx));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  webhook: {
-    domain: process.env.DOMAIN,
-    port: process.env.PORT,
-  },
+  // webhook: {
+  //   domain: process.env.DOMAIN,
+  //   port: process.env.PORT,
+  // },
 });
