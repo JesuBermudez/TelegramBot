@@ -11,11 +11,11 @@ export default async function createdCommands(ctx, bot) {
   let command = {}; // command from the api
 
   // no text or caption
-  if (cmd.length <= 1 && text.length <= 1) {
+  if (cmd === "/")
     bot.telegram.setMessageReaction(chatId, message.message_id, [
       { type: "emoji", emoji: "🤨" },
     ]);
-  }
+  if (cmd.length <= 1 && text.length <= 1) return;
 
   // bot gives an AI response
   if (!cmd) {
