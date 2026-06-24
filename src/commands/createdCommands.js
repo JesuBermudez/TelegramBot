@@ -11,15 +11,13 @@ export default async function createdCommands(ctx, bot) {
   let command = {}; // command from the api
 
   // no text or caption
-  if (cmd === "/")
-    bot.telegram.setMessageReaction(chatId, message.message_id, [
-      { type: "emoji", emoji: "🤨" },
-    ]);
+  if (cmd === "/") ctx.react("🤨");
+
   if (cmd.length <= 1 && text.length <= 1) return;
 
   // bot gives an AI response
   if (!cmd) {
-    chatai(ctx, text);
+    chatai(ctx, bot, text);
     return;
   }
 
@@ -29,15 +27,13 @@ export default async function createdCommands(ctx, bot) {
   // api request
   try {
     const response = await axios.get(
-      `${process.env.BOT_API}/command/${chatId}${cmd}`,
+      `${process.env.BOT_COMMAND_API}/command/${chatId}${cmd}`,
     );
 
     command = response.data.command;
   } catch (error) {
     if (error.status === 404) {
-      bot.telegram.setMessageReaction(chatId, message.message_id, [
-        { type: "emoji", emoji: "🤷‍♂️" },
-      ]);
+      ctx.react("🤷‍♂️");
       return;
     }
 

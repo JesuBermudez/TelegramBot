@@ -8,7 +8,9 @@ export async function all(ctx, bot) {
 
   // make the api request
   try {
-    response = await axios.get(`${process.env.BOT_API}/command/${chatId}/all`);
+    response = await axios.get(
+      `${process.env.BOT_COMMAND_API}/command/${chatId}/all`,
+    );
     command = response.data.command;
   } catch (error) {
     response = "command not found";
@@ -43,7 +45,7 @@ export async function add(ctx) {
 
   try {
     const response = await axios.put(
-      `${process.env.BOT_API}/command/${chatId}/all/` + `@${username}`,
+      `${process.env.BOT_COMMAND_API}/command/${chatId}/all/` + `@${username}`,
     );
 
     if (response.data.message == "username added") {

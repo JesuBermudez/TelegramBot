@@ -53,7 +53,9 @@ export async function commandsList(ctx, bot) {
 
   // make the api request
   try {
-    const response = await axios.get(`${process.env.BOT_API}/chat/${chatId}`);
+    const response = await axios.get(
+      `${process.env.BOT_COMMAND_API}/chat/${chatId}`,
+    );
 
     commArray = response.data.list;
   } catch (error) {

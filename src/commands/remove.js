@@ -30,7 +30,7 @@ export default async function remove(ctx, bot) {
   // api request
   try {
     response = await axios.delete(
-      `${process.env.BOT_API}/command/${chatId}/${user}/${role}`,
+      `${process.env.BOT_COMMAND_API}/command/${chatId}/${user}/${role}`,
       {
         data: {
           name: payload[0],

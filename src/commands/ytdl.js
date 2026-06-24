@@ -11,9 +11,7 @@ export default async function downloader(ctx, bot) {
 
   if (!(messageContent[0].length > 22)) {
     try {
-      bot.telegram.setMessageReaction(chatId, msgId, [
-        { type: "emoji", emoji: "😡" },
-      ]);
+      ctx.react("😡");
     } catch (error) {}
     return;
   }

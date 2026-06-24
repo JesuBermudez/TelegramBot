@@ -44,7 +44,7 @@ export default async function alias(ctx) {
   // add the command
   try {
     const response = await axios.post(
-      `${process.env.BOT_API}/command/${message.chat.id}`,
+      `${process.env.BOT_COMMAND_API}/command/${message.chat.id}`,
       {
         ...command,
         name: payload[0],
