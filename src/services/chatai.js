@@ -8,7 +8,7 @@ import {
   chatContextToString,
 } from "../temp/chatContext.js";
 
-export default async function chatai(ctx, txt) {
+export default async function chatai(ctx, bot, txt) {
   const message = ctx.update.message;
   const chatId = message.chat.id;
 
@@ -28,7 +28,7 @@ export default async function chatai(ctx, txt) {
 
   // request to the AI API
   try {
-    const result = await axios.post(`${process.env.AI_API}/chat`, {
+    const result = await axios.post(`${process.env.TEXT_AI_API}/chat`, {
       messages: [
         {
           role: "user",
@@ -44,12 +44,17 @@ export default async function chatai(ctx, txt) {
     });
 
     const response = result.data;
+    const { replyId, reaction, body } = parseResponse(response);
 
-    if (!response.toLocaleLowerCase().includes("skip")) {
-      const { replyId, body } = parseResponse(response);
+    if (reaction) {
+      bot.telegram.setMessageReaction(chatId, replyId || message.message_id, [
+        { type: "emoji", emoji: reaction },
+      ]);
+    }
 
+    if (!body.toLocaleLowerCase().includes("skip")) {
       ctx.reply(body, {
-        reply_to_message_id: replyId || message.message_id,
+        reply_to_message_id: replyId,
       });
 
       addChatContext(chatId, response, true);
@@ -59,6 +64,5 @@ export default async function chatai(ctx, txt) {
       "Error en ChatAI: ",
       err.response?.data || err.message || "Internal error",
     );
-    console.log(err.response);
   }
 }

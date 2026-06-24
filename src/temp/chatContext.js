@@ -7,7 +7,7 @@ export const historyContext = [
       {
         text: `Eres @TeamCodersBot, un participante más del grupo de Telegram de unos amigos ingenieros en sistemas de Colombia. No eres un asistente, eres alguien del grupo.
 
-Tu personalidad es simple: eres el man del grupo que siempre tiene algo que decir, pero sin esforzarse. No tratas de ser gracioso, simplemente eres así. La diferencia clave: **si no tienes nada que aportar, callate** — responde exactamente: skip, y el sistema no manda nada.
+Tu personalidad es simple: eres el man del grupo que siempre tiene algo que decir, pero sin esforzarse. No tratas de ser gracioso, simplemente eres así. **si no tienes nada que aportar, no lo fuerzes**
 
 **Cómo hablas:**
 - Como habla cualquier colombiano normal hablando con amigos, sin exagerar regionalismos
@@ -17,7 +17,7 @@ Tu personalidad es simple: eres el man del grupo que siempre tiene algo que deci
 - No terminas mensajes con moraleja, no explicas el chiste, no añades frases "de programador"
 
 **Lo que NO haces:**
-- No usas frases hechas de "programador" (no más "Houston tenemos un problema", "está en producción", etc.)
+- No usas frases hechas de "programador"
 - No tratas de sonar colombiano, simplemente lo eres
 
 **Formato de mensajes que recibirás:**
@@ -25,8 +25,20 @@ Tu personalidad es simple: eres el man del grupo que siempre tiene algo que deci
 contenido del mensaje...
 
 **Formato de tus respuestas:**
-[id:undefined | from:model | reply_to_message:ID_DEL_MENSAJE_AL_QUE_RESPONDES]
+[id:undefined | from:model | reply_to_message:<id o undefined> | reaction:<emoji o undefined>]
 tu mensaje (o simplemente \`skip\`)
+
+Además de responder con texto, puedes reaccionar a mensajes (solo hazlo 10%-20% de las veces, no siempre).
+- reaction debe ser un único emoji permitido o undefined.
+- Puedes:
+  1. Solo reaccionar.
+  2. Solo responder.
+  3. Responder y reaccionar al mismo tiempo.
+  4. No hacer nada y responder "skip".
+Si solo vas a reaccionar y no a escribir nada, el cuerpo del mensaje debe ser "skip".
+
+No inventes emojis, no reacciones siempre y solo puedes usar estos:
+🤣 🤡 🤔 🤯 😴 😈 💩 🗿 👀 🤨 🙈 🤓 👨‍💻 🔥 👍 👎 😭 😡 😱 💯 ⚡ 💅 🥴 😎 🤷‍♂
 
 El historial del chat viene concatenado para que tengas contexto. No lo repitas en tu respuesta.`,
       },
@@ -36,7 +48,7 @@ El historial del chat viene concatenado para que tengas contexto. No lo repitas 
     role: "model",
     parts: [
       {
-        text: "[id:undefined | from:model | reply_to_message:undefined]\nListo, tratare mensajes con humor o informare.",
+        text: "[id:undefined | from:model | reply_to_message:undefined]\nListo, tratare mensajes con humor o informaré.",
       },
     ],
   },
@@ -55,7 +67,7 @@ export function getChatContext(chatId) {
 }
 
 export function addChatContext(chatId, text, isBot = false) {
-  const max = 40;
+  const max = 45;
   getChatContext(chatId).push({
     role: isBot ? "model" : "user",
     parts: [{ text }],
@@ -106,12 +118,26 @@ export function handleReplyChatContext(chatId, text, message) {
 }
 
 export function parseResponse(response) {
-  // extrae el id del mensaje al que responde el modelo
-  const [header, ...bodyParts] = response.split("]");
-  const body = bodyParts.join("\n").trim() || header;
-  const idMatch = header.match(/reply_to_message:(\d+)/);
-  const replyId = idMatch ? parseInt(idMatch[1], 10) : undefined;
-  return { replyId, body };
+  // extrae el id del mensaje al que responde el modelo y reaccion si aplica, y el cuerpo del mensaje
+  const [header, ...bodyParts] = response.split("\n");
+
+  const body = bodyParts.join("\n").trim();
+
+  const replyMatch = header.match(/reply_to_message:(\d+)/);
+
+  const reactionMatch = header.match(/reaction:([^\]|]+)/);
+
+  return {
+    replyId:
+      replyMatch && !isNaN(parseInt(replyMatch[1], 10))
+        ? parseInt(replyMatch[1], 10)
+        : undefined,
+    reaction:
+      reactionMatch?.[1]?.trim() === "undefined"
+        ? undefined
+        : reactionMatch?.[1]?.trim(),
+    body,
+  };
 }
 
 export default async function chatContextCount(ctx, bot) {
@@ -130,12 +156,22 @@ export default async function chatContextCount(ctx, bot) {
   });
 }
 
-export function chatContextToString(contextArray) {
-  return contextArray
-    .map((msg) => {
-      const role = msg.role === "model" ? "BOT" : "USER";
-      const text = msg.parts?.[0]?.text ?? "";
-      return `[${role}]\n${text}`;
-    })
-    .join("\n\n");
+export function chatContextToString(contextArray, maxChars = 4000) {
+  let result = "";
+
+  for (let i = contextArray.length - 1; i >= 0; i--) {
+    const msg = contextArray[i];
+
+    const role = msg.role === "model" ? "BOT" : "USER";
+    const text = msg.parts?.[0]?.text ?? "";
+    const block = `[${role}]\n${text}\n\n`;
+
+    if (result.length + block.length > maxChars && result !== "") {
+      break;
+    }
+
+    result = block + result;
+  }
+
+  return result.trim();
 }
