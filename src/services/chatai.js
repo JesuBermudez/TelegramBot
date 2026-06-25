@@ -52,7 +52,11 @@ export default async function chatai(ctx, bot, txt) {
       ]);
     }
 
-    if (!body.toLocaleLowerCase().includes("skip") && body.length <= 650) {
+    if (
+      !body.toLocaleLowerCase().includes("skip") &&
+      body != "" &&
+      body.length <= 650
+    ) {
       ctx.reply(body, {
         reply_to_message_id: replyId,
       });
