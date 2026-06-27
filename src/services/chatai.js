@@ -55,7 +55,7 @@ export default async function chatai(ctx, bot, txt) {
     if (
       !body.toLocaleLowerCase().includes("skip") &&
       body != "" &&
-      body.length <= 650
+      body.length <= 350
     ) {
       ctx.reply(body, {
         reply_to_message_id: replyId,
