@@ -59,7 +59,8 @@ export async function commandsList(ctx, bot) {
 
     commArray = response.data.list;
   } catch (error) {
-    console.log(error.response);
+    console.log(error.response?.data);
+    return;
   }
 
   if (commArray?.length === 0 || commArray == undefined) {

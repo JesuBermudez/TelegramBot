@@ -40,7 +40,7 @@ export default async function createdCommands(ctx, bot) {
     ctx.reply(
       error.response?.data?.error ||
         (error.response?.statusText &&
-          `$${error.response?.statusText} ${error.response?.status}`) ||
+          `${error.response?.statusText} ${error.response?.status}`) ||
         error.message ||
         "Servidor no disponible",
       {
