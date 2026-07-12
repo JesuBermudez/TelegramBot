@@ -3,7 +3,7 @@ import axios from "axios";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export default async function transcription(ctx) {
+export default async function tran(ctx) {
   const message = ctx.update.message;
   const chatId = message.chat.id;
   const msgId = message.message_id;
@@ -35,7 +35,7 @@ export default async function transcription(ctx) {
     const base64Audio = Buffer.from(fileResponse.data).toString("base64");
 
     // envia el audio a Gemini para transcribirlo
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
 
     const result = await model.generateContent([
       {
