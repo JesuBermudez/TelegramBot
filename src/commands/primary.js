@@ -36,7 +36,9 @@ export function help(ctx, bot) {
     "   *12*. */get*  - Descargar videos de _X_, _Instagram_ o _Youtube_.\n" +
     "__Uso__: - `/get link texto_extra`\n\n" +
     "   *13*. */fetch*  - Hace una petición a una URL y devuelve la respuesta o el error.\n" +
-    "__Uso__: - `/fetch https://ejemplo.com/api`\n\n";
+    "__Uso__: - `/fetch https://ejemplo.com/api`\n\n" +
+    "   *14*. */transcription*  - Transcribe a texto un audio o nota de voz.\n" +
+    "__Uso__: - Responder con `/transcription` a un audio o nota de voz\n\n";
 
   const finalMessage = escapeMarkdownV2(helpMessage, true);
 

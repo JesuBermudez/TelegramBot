@@ -14,6 +14,7 @@ import downloader from "./commands/ytdl.js";
 import toPdf from "./commands/toPdf.js";
 import chatContextCount from "./temp/chatContext.js";
 import { fetchUrlAsString } from "./commands/fetchUrl.js";
+import transcription from "./commands/transcription.js";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -36,6 +37,7 @@ bot.command("get", (ctx) => downloader(ctx, bot));
 bot.command("pdf", (ctx) => toPdf(ctx, bot));
 bot.command("ctx", (ctx) => chatContextCount(ctx, bot));
 bot.command("fetch", (ctx) => fetchUrlAsString(ctx));
+bot.command("transcription", (ctx) => transcription(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
