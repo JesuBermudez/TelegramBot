@@ -42,8 +42,8 @@ bot.command("tran", (ctx) => tran(ctx));
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
 bot.launch({
-  webhook: {
-    domain: process.env.DOMAIN,
-    port: process.env.PORT,
-  },
+  // webhook: {
+  //   domain: process.env.DOMAIN,
+  //   port: process.env.PORT,
+  // },
 });
