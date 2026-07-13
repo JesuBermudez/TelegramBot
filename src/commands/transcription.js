@@ -3,7 +3,7 @@ import axios from "axios";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export default async function tran(ctx) {
+export default async function transcription(ctx) {
   const message = ctx.update.message;
   const chatId = message.chat.id;
   const msgId = message.message_id;
