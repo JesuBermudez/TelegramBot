@@ -66,7 +66,7 @@ function resolveTarget(replied) {
   return null;
 }
 
-export default async function resumen(ctx) {
+export default async function resume(ctx) {
   const message = ctx.update.message;
   const chatId = message.chat.id;
   const msgId = message.message_id;

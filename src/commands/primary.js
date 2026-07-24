@@ -40,10 +40,10 @@ export function help(ctx, bot) {
     "__Uso__: - `/fetch https://ejemplo.com/api`\n\n" +
     "   *14*. */tran*  - Transcribe a texto un audio o nota de voz.\n" +
     "__Uso__: - Responder con `/transcription` a un audio o nota de voz\n\n" +
-    "   *15*. */resumen*  - Resume texto, imagen, audio o video.\n" +
-    "__Uso__: - Responder con `/resumen` a un mensaje con texto, imagen, audio o video\n\n" +
-    "   *16*. */ia*  - Pregúntale algo directamente a la IA.\n" +
-    "__Uso__: - `/ia pregunta` (ej: `/ia qué cocino hoy?`)\n\n";
+    "   *15*. */resume*  - Resume texto, imagen, audio o video.\n" +
+    "__Uso__: - Responder con `/resume` a un mensaje con texto, imagen, audio o video\n\n" +
+    "   *16*. */ask*  - Pregúntale algo directamente a la IA.\n" +
+    "__Uso__: - `/ask pregunta` (ej: `/ask qué cocino hoy?`)\n\n";
 
   const finalMessage = escapeMarkdownV2(helpMessage, true);
 

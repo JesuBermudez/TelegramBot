@@ -8,7 +8,7 @@ const INSTRUCTION =
   "directa (máximo 4-6 líneas), sin rodeos ni texto de relleno. Si la " +
   "pregunta requiere pasos, usa una lista corta:\n\n";
 
-export default async function ia(ctx) {
+export default async function singleIAPetition(ctx) {
   const message = ctx.update.message;
   const msgId = message.message_id;
   const { text } = handleMessageText(message);

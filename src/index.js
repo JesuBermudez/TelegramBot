@@ -14,9 +14,9 @@ import downloader from "./commands/ytdl.js";
 import toPdf from "./commands/toPdf.js";
 import chatContextCount from "./temp/chatContext.js";
 import { fetchUrlAsString } from "./commands/fetchUrl.js";
-import tran from "./commands/transcription.js";
-import resumen from "./commands/resumen.js";
-import ia from "./commands/ia.js";
+import transcription from "./commands/transcription.js";
+import resume from "./commands/resume.js";
+import singleAIPetition from "./commands/singleAIPetition.js";
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -39,9 +39,9 @@ bot.command("get", (ctx) => downloader(ctx, bot));
 bot.command("pdf", (ctx) => toPdf(ctx, bot));
 bot.command("ctx", (ctx) => chatContextCount(ctx, bot));
 bot.command("fetch", (ctx) => fetchUrlAsString(ctx));
-bot.command("tran", (ctx) => tran(ctx));
-bot.command("resumen", (ctx) => resumen(ctx));
-bot.command("ia", (ctx) => ia(ctx));
+bot.command("tran", (ctx) => transcription(ctx));
+bot.command("resume", (ctx) => resume(ctx));
+bot.command("ask", (ctx) => singleAIPetition(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
