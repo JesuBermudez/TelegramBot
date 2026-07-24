@@ -5,7 +5,8 @@ import { sendLongMessage } from "../utils/sendLongMessages.js";
 export function start(ctx) {
   ctx.reply(
     "Este es el bot de *TeamCoder's*💻 🚀\n\n" +
-      "Este se encarga de la _administración_ asi como de responder a los _mensajes_ y a _comandos_\\.\n\n",
+      "Este se encarga de la _administración_ asi como de responder a los _mensajes_ y a _comandos_\\.\n\n" +
+      "Nuevo: */resumen* \\(resume texto, imagen, audio o video respondido\\) e */ia* \\(pregúntale algo a la IA\\)\\. Usa */help* para ver todos los comandos\\.\n\n",
     { parse_mode: "MarkdownV2" },
   );
 }
@@ -38,7 +39,11 @@ export function help(ctx, bot) {
     "   *13*. */fetch*  - Hace una petición a una URL y devuelve la respuesta o el error.\n" +
     "__Uso__: - `/fetch https://ejemplo.com/api`\n\n" +
     "   *14*. */tran*  - Transcribe a texto un audio o nota de voz.\n" +
-    "__Uso__: - Responder con `/transcription` a un audio o nota de voz\n\n";
+    "__Uso__: - Responder con `/transcription` a un audio o nota de voz\n\n" +
+    "   *15*. */resumen*  - Resume texto, imagen, audio o video.\n" +
+    "__Uso__: - Responder con `/resumen` a un mensaje con texto, imagen, audio o video\n\n" +
+    "   *16*. */ia*  - Pregúntale algo directamente a la IA.\n" +
+    "__Uso__: - `/ia pregunta` (ej: `/ia qué cocino hoy?`)\n\n";
 
   const finalMessage = escapeMarkdownV2(helpMessage, true);
 
