@@ -1,22 +1,26 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
+import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-export default async function tran(ctx) {
+export default async function transcription(ctx) {
   const message = ctx.update.message;
   const chatId = message.chat.id;
   const msgId = message.message_id;
   const replied = message.reply_to_message;
 
   // debe responder a un mensaje, y ese mensaje debe ser audio o nota de voz
-  if (!replied || !(replied.voice || replied.audio)) {
-    ctx.reply(
+if (!replied || !(replied.voice || replied.audio)) {
+  ctx.reply(
+    escapeMarkdownV2(
       "⚠ *Atención:* Este comando solo funciona respondiendo a un audio o nota de voz.",
-      { parse_mode: "MarkdownV2", reply_to_message_id: msgId },
-    );
-    return;
-  }
+      true,
+    ),
+    { parse_mode: "MarkdownV2", reply_to_message_id: msgId },
+  );
+  return;
+}
 
   const fileId = replied.voice?.file_id || replied.audio?.file_id;
   const mimeType =

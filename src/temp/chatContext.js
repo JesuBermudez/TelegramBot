@@ -119,6 +119,14 @@ export function handleReplyChatContext(chatId, text, message) {
 
 export function parseResponse(response) {
   // extrae el id del mensaje al que responde el modelo y reaccion si aplica, y el cuerpo del mensaje
+  if (!response) {
+    return {
+      replyId: undefined,
+      reaction: undefined,
+      body: "",
+    };
+  }
+
   const [header, ...bodyParts] = response.split("\n");
 
   const body = bodyParts.join("\n").trim();
