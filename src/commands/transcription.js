@@ -1,8 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import axios from "axios";
 import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
 export default async function transcription(ctx) {
   const message = ctx.update.message;
@@ -11,16 +11,16 @@ export default async function transcription(ctx) {
   const replied = message.reply_to_message;
 
   // debe responder a un mensaje, y ese mensaje debe ser audio o nota de voz
-if (!replied || !(replied.voice || replied.audio)) {
-  ctx.reply(
-    escapeMarkdownV2(
-      "⚠ *Atención:* Este comando solo funciona respondiendo a un audio o nota de voz.",
-      true,
-    ),
-    { parse_mode: "MarkdownV2", reply_to_message_id: msgId },
-  );
-  return;
-}
+  if (!replied || !(replied.voice || replied.audio)) {
+    ctx.reply(
+      escapeMarkdownV2(
+        "⚠ *Atención:* Este comando solo funciona respondiendo a un audio o nota de voz.",
+        true,
+      ),
+      { parse_mode: "MarkdownV2", reply_to_message_id: msgId },
+    );
+    return;
+  }
 
   const fileId = replied.voice?.file_id || replied.audio?.file_id;
   const mimeType =
@@ -39,21 +39,22 @@ if (!replied || !(replied.voice || replied.audio)) {
     const base64Audio = Buffer.from(fileResponse.data).toString("base64");
 
     // envia el audio a Gemini para transcribirlo
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
-
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          data: base64Audio,
-          mimeType,
+    const result = await genAI.models.generateContent({
+      model: "gemini-3.6-flash",
+      contents: [
+        {
+          inlineData: {
+            data: base64Audio,
+            mimeType,
+          },
         },
-      },
-      {
-        text: "Transcribe el audio completo de forma literal, en el idioma original. No agregues comentarios, resúmenes ni notas adicionales, solo el texto transcrito.",
-      },
-    ]);
+        {
+          text: "Transcribe el audio completo de forma literal, en el idioma original. No agregues comentarios, resúmenes ni notas adicionales, solo el texto transcrito.",
+        },
+      ],
+    });
 
-    const text = result.response.text().trim();
+    const text = result.text.trim();
 
     try {
       await ctx.telegram.deleteMessage(chatId, loadingMsg.message_id);

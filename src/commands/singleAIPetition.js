@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import handleMessageText from "../utils/handleMessageText.js";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
 const INSTRUCTION =
   "Responde la siguiente pregunta o instrucción en español, de forma breve y " +
@@ -16,7 +16,7 @@ export default async function singleIAPetition(ctx) {
 
   if (!prompt) {
     ctx.reply(
-      "⚠ *Atención:* Debes escribir una pregunta. Ejemplo: `/ia Qué cocino hoy?`",
+      "⚠ *Atención:* Debes escribir una pregunta. Ejemplo: `/ask Qué cocino hoy?`",
       { parse_mode: "MarkdownV2", reply_to_message_id: msgId },
     );
     return;
@@ -34,12 +34,14 @@ export default async function singleIAPetition(ctx) {
   });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
-    const result = await model.generateContent([
-      { text: `${INSTRUCTION}${prompt}` },
-    ]);
+    const result = await genAI.models.generateContent({
+      model: "gemini-3.6-flash",
+      contents: [
+        { role: "user", parts: [{ text: `${INSTRUCTION}${prompt}` }] },
+      ],
+    });
 
-    const answer = result.response.text().trim();
+    const answer = result.text.trim();
 
     try {
       await ctx.telegram.deleteMessage(message.chat.id, loadingMsg.message_id);

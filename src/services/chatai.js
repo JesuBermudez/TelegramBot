@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import {
   addChatContext,
   chatContexts,
@@ -8,7 +8,7 @@ import {
   chatContextToString,
 } from "../temp/chatContext.js";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export default async function chatai(ctx, bot, txt) {
   const message = ctx.update.message;
@@ -23,24 +23,21 @@ export default async function chatai(ctx, bot, txt) {
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
 
   // chat context history
-  const historyString = chatContextToString([
+  const history = [
     ...historyContext,
     ...(chatContexts[chatId] || []),
-  ]);
+    { role: "user", parts: [{ text: txt }] },
+  ];
 
   // request to the AI API
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const result = await genAI.models.generateContent({
+      model: "gemini-3.6-flash",
+      store: false,
+      contents: history,
+    });
 
-    const result = await model.generateContent(`
-            Este es el historial del chat (léelo como contexto, no lo repitas):
-
-            ${historyString}
-
-            Mensaje actual:
-            ${txt}`);
-
-    const response = result.response.text();
+    const response = result.text.trim();
     const { replyId, reaction, body } = parseResponse(response);
 
     if (reaction) {

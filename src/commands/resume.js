@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import axios from "axios";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
 
 const INSTRUCTION =
   "Resume brevemente el contenido adjunto (o el texto, si es texto) en español. " +
@@ -96,13 +96,13 @@ export default async function resume(ctx) {
   });
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
     let result;
 
     if (target.kind === "text") {
-      result = await model.generateContent([
-        { text: `${INSTRUCTION}\n\nTexto:\n${target.text}` },
-      ]);
+      result = await genAI.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: [{ text: `${INSTRUCTION}\n\nTexto:\n${target.text}` }],
+      });
     } else {
       // descarga el archivo (imagen, audio, video o documento) desde Telegram
       const fileLink = await ctx.telegram.getFileLink(target.fileId);
@@ -122,13 +122,16 @@ export default async function resume(ctx) {
 
       const base64Data = Buffer.from(fileResponse.data).toString("base64");
 
-      result = await model.generateContent([
-        { inlineData: { data: base64Data, mimeType: target.mimeType } },
-        { text: INSTRUCTION },
-      ]);
+      result = await genAI.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: [
+          { inlineData: { data: base64Data, mimeType: target.mimeType } },
+          { text: INSTRUCTION },
+        ],
+      });
     }
 
-    const text = result.response.text().trim();
+    const text = result.text.trim();
 
     try {
       await ctx.telegram.deleteMessage(chatId, loadingMsg.message_id);
