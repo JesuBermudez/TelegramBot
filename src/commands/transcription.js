@@ -40,7 +40,7 @@ export default async function transcription(ctx) {
 
     // envia el audio a Gemini para transcribirlo
     const result = await genAI.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: "gemini-3.1-flash-lite",
       contents: [
         {
           inlineData: {
