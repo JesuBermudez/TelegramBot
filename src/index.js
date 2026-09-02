@@ -18,13 +18,13 @@ import transcription from "./commands/transcription.js";
 import resume from "./commands/resume.js";
 import singleAIPetition from "./commands/singleAIPetition.js";
 
+const log = (tag, msg) => console.error(`[${new Date().toISOString()}] [${tag}] ${msg}`);
+
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// todo: functions
 bot.start((ctx) => start(ctx));
 bot.help((ctx) => help(ctx, bot));
 
-// todo: response commands
 bot.command("all", (ctx) => all(ctx, bot));
 bot.command("add", (ctx) => add(ctx));
 bot.command("alias", (ctx) => alias(ctx));
@@ -45,9 +45,47 @@ bot.command("ask", (ctx) => singleAIPetition(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
 
-bot.launch({
-  // webhook: {
-  //   domain: process.env.DOMAIN,
-  //   port: process.env.PORT,
-  // },
+// Un error en un handler NUNCA debe matar el proceso
+bot.catch((err, ctx) => {
+  const desc = ctx?.updateType ?? "update";
+  log("handler", `Error en ${desc}: ${err.message ?? err}`);
 });
+
+// Promesas rechazadas / excepciones no capturadas: log, no morir
+process.on("unhandledRejection", (reason) => {
+  log("process", `UnhandledRejection: ${reason?.message ?? reason}`);
+});
+process.on("uncaughtException", (err) => {
+  log("process", `UncaughtException: ${err.message}`);
+});
+
+// ─── Launch con backoff ────────────────────────────────────────────────────
+const LAUNCH_MAX_DELAY = 5 * 60_000;
+const LAUNCH_BASE_DELAY = 5_000;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+let stopping = false;
+
+async function launchWithRetry() {
+  for (let attempt = 0; !stopping; attempt++) {
+    try {
+      await bot.launch();
+      log("launch", "Polling terminó inesperadamente (bot.launch() resolvió)");
+    } catch (err) {
+      if (stopping) break;
+      log("launch", `Error en launch: ${err.code ?? err.message}`);
+    }
+    if (stopping) break;
+    const delay = Math.min(LAUNCH_BASE_DELAY * 2 ** attempt, LAUNCH_MAX_DELAY);
+    log("launch", `Reintentando launch en ${Math.round(delay / 1000)}s...`);
+    await sleep(delay);
+  }
+  log("launch", "Loop de launch terminado");
+}
+
+// Graceful shutdown
+process.once("SIGINT", () => { stopping = true; bot.stop("SIGINT"); });
+process.once("SIGTERM", () => { stopping = true; bot.stop("SIGTERM"); });
+
+launchWithRetry();

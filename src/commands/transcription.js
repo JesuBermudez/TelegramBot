@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import axios from "axios";
 import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export default async function transcription(ctx) {
   const message = ctx.update.message;

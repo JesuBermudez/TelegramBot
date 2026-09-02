@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import handleMessageText from "../utils/handleMessageText.js";
 
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const INSTRUCTION =
   "Responde la siguiente pregunta o instrucción en español, de forma breve y " +

@@ -34,7 +34,7 @@ export async function all(ctx, bot) {
 
   ctx.reply(command.command, {
     reply_to_message_id:
-      message.reply_to_message.message_id || message.message_id,
+      message?.reply_to_message?.message_id || message.message_id,
   });
 }
 
@@ -47,7 +47,6 @@ export async function add(ctx) {
     const response = await axios.put(
       `${process.env.BOT_COMMAND_API}/command/${chatId}/all/` + `@${username}`,
     );
-
     if (response.data.message == "username added") {
       ctx.reply("✨ *El usuario ha sido añadido\\!*", {
         parse_mode: "MarkdownV2",

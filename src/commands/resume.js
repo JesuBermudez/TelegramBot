@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import axios from "axios";
 
-const genAI = new GoogleGenAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const INSTRUCTION =
   "Resume brevemente el contenido adjunto (o el texto, si es texto) en español. " +
