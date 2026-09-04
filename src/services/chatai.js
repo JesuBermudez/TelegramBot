@@ -32,7 +32,7 @@ export default async function chatai(ctx, bot, txt) {
   // request to the AI API
   try {
     const result = await genAI.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
       store: false,
       contents: history,
     });

@@ -35,7 +35,7 @@ export default async function singleIAPetition(ctx) {
 
   try {
     const result = await genAI.models.generateContent({
-      model: "gemini-3.6-flash",
+      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
       contents: [
         { role: "user", parts: [{ text: `${INSTRUCTION}${prompt}` }] },
       ],

@@ -100,7 +100,7 @@ export default async function resume(ctx) {
 
     if (target.kind === "text") {
       result = await genAI.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
         contents: [{ text: `${INSTRUCTION}\n\nTexto:\n${target.text}` }],
       });
     } else {
@@ -123,7 +123,7 @@ export default async function resume(ctx) {
       const base64Data = Buffer.from(fileResponse.data).toString("base64");
 
       result = await genAI.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
         contents: [
           { inlineData: { data: base64Data, mimeType: target.mimeType } },
           { text: INSTRUCTION },
