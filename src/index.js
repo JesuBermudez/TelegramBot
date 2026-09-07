@@ -17,8 +17,10 @@ import { fetchUrlAsString } from "./commands/fetchUrl.js";
 import transcription from "./commands/transcription.js";
 import resume from "./commands/resume.js";
 import singleAIPetition from "./commands/singleAIPetition.js";
+import { initChatContext } from "./utils/chatContext.js";
 
-const log = (tag, msg) => console.error(`[${new Date().toISOString()}] [${tag}] ${msg}`);
+const log = (tag, msg) =>
+  console.error(`[${new Date().toISOString()}] [${tag}] ${msg}`);
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -44,6 +46,8 @@ bot.command("resume", (ctx) => resume(ctx));
 bot.command("ask", (ctx) => singleAIPetition(ctx));
 
 bot.on("message", (ctx) => createdCommands(ctx, bot));
+
+await initChatContext();
 
 // Un error en un handler NUNCA debe matar el proceso
 bot.catch((err, ctx) => {
@@ -85,7 +89,13 @@ async function launchWithRetry() {
 }
 
 // Graceful shutdown
-process.once("SIGINT", () => { stopping = true; bot.stop("SIGINT"); });
-process.once("SIGTERM", () => { stopping = true; bot.stop("SIGTERM"); });
+process.once("SIGINT", () => {
+  stopping = true;
+  bot.stop("SIGINT");
+});
+process.once("SIGTERM", () => {
+  stopping = true;
+  bot.stop("SIGTERM");
+});
 
 launchWithRetry();
