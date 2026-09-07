@@ -6,7 +6,7 @@ import {
   historyContext,
   parseResponse,
   chatContextToString,
-} from "../temp/chatContext.js";
+} from "../utils/chatContext.js";
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -17,8 +17,8 @@ export default async function chatai(ctx, bot, txt) {
   // Validations to respond with AI
   const isReplyToBot = message.reply_to_message?.from?.id === 6780284659;
   const mentionsBot = txt.includes("TeamCodersBot");
-  const randomChance = Math.floor(Math.random() * 100 + 1) <= 10; // 10% chance to respond randomly
-  addChatContext(chatId, formatChatContextText(txt, message));
+  const randomChance = Math.floor(Math.random() * 100 + 1) <= 8; // 8% chance to respond randomly
+  await addChatContext(chatId, formatChatContextText(txt, message));
 
   if (!(isReplyToBot || mentionsBot || randomChance)) return;
 
@@ -32,7 +32,7 @@ export default async function chatai(ctx, bot, txt) {
   // request to the AI API
   try {
     const result = await genAI.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
+      model: "gemini-3.1-flash-lite",
       store: false,
       contents: history,
     });
