@@ -1,4 +1,12 @@
-import handleMessageText from "../utils/handleMessageText.js";
+import handleMessageText from "./handleMessageText.js";
+import fs from "fs/promises";
+import path from "path";
+
+const CONTEXT_DIR = path.join(process.cwd(), "temp", "chatContexts");
+const STATE_FILE = path.join(process.cwd(), "temp", "chatState.json");
+
+const MAX_CONTEXT_MESSAGES = 50;
+const SAVE_EVERY_MESSAGES = 15;
 
 export const historyContext = [
   {
@@ -58,6 +66,15 @@ export const chatContexts = {
   // This array will hold the chat context for the AI responses
 };
 
+let messagesSinceSave = {};
+
+export async function initChatContext() {
+  await fs.mkdir(CONTEXT_DIR, { recursive: true });
+
+  await loadChatState();
+  await loadChatContexts();
+}
+
 export function getChatContext(chatId) {
   // Returns the chat context for a specific chatId
   if (!chatContexts[chatId]) {
@@ -66,55 +83,90 @@ export function getChatContext(chatId) {
   return chatContexts[chatId];
 }
 
-export function addChatContext(chatId, text, isBot = false) {
-  const max = 45;
-  getChatContext(chatId).push({
+export async function addChatContext(chatId, text, isBot = false) {
+  const context = getChatContext(chatId);
+  context.push({
     role: isBot ? "model" : "user",
     parts: [{ text }],
   });
 
-  if (chatContexts[chatId].length > max) {
-    chatContexts[chatId] = chatContexts[chatId].slice(-max);
+  if (context.length > MAX_CONTEXT_MESSAGES) {
+    chatContexts[chatId] = context.slice(-MAX_CONTEXT_MESSAGES);
   }
+
+  messagesSinceSave[chatId] = (messagesSinceSave[chatId] ?? 0) + 1;
+
+  if (messagesSinceSave[chatId] >= SAVE_EVERY_MESSAGES) {
+    await saveChatContext(chatId);
+
+    messagesSinceSave[chatId] = 0;
+  }
+
+  await checkSaveCounter(chatId);
+}
+
+async function saveChatContext(chatId) {
+  const filePath = getChatFilePath(chatId);
+
+  await fs.writeFile(
+    filePath,
+    JSON.stringify(chatContexts[chatId] ?? [], null, 2),
+    "utf8",
+  );
+}
+
+async function loadChatContexts() {
+  const files = await fs.readdir(CONTEXT_DIR);
+
+  for (const file of files) {
+    if (!file.endsWith(".json")) continue;
+
+    const chatId = path.basename(file, ".json");
+    const filePath = path.join(CONTEXT_DIR, file);
+
+    try {
+      const data = await fs.readFile(filePath, "utf8");
+
+      chatContexts[chatId] = JSON.parse(data);
+    } catch (error) {
+      console.error(`[LOG] Error cargando contexto ${chatId}: `, error);
+    }
+  }
+}
+
+async function loadChatState() {
+  try {
+    const data = await fs.readFile(STATE_FILE, "utf8");
+    const state = JSON.parse(data);
+
+    messagesSinceSave = state.messagesSinceSave ?? {};
+  } catch {
+    await saveChatState();
+  }
+}
+
+async function saveChatState() {
+  const state = {
+    messagesSinceSave,
+  };
+
+  await fs.writeFile(STATE_FILE, JSON.stringify(state, null, 2), "utf8");
+}
+
+async function checkSaveCounter(chatId) {
+  if (messagesSinceSave[chatId] >= SAVE_EVERY_MESSAGES) {
+    messagesSinceSave[chatId] = 0;
+
+    await saveChatState();
+  }
+}
+
+function getChatFilePath(chatId) {
+  return path.join(CONTEXT_DIR, `${chatId}.json`);
 }
 
 export function formatChatContextText(text, message) {
   return `[id:${message.message_id} | from:${message.from.first_name} @${message.from.username} | reply_to_message:${message.reply_to_message?.message_id}] \n${text}`;
-}
-
-export function handleReplyChatContext(chatId, text, message) {
-  const replyId = message.reply_to_message?.message_id;
-
-  if (replyId) {
-    const groupContext = getChatContext(chatId);
-
-    const index = groupContext.findIndex((item) => {
-      const header = item.parts[0].text.split("\n")[0]; // primera línea
-      return (
-        // es mensaje del modelo, tiene el .text del mensaje al que responde y el header contiene "id:undefined"
-        item.role === "model" &&
-        item.parts[0].text.includes(message.reply_to_message.text) &&
-        header.includes("id:undefined")
-      );
-    });
-
-    if (index !== -1) {
-      // reemplazar el id en el header por el id del message al que responde
-      groupContext[index].parts[0].text = groupContext[
-        index
-      ].parts[0].text.replace("id:undefined", `id:${replyId}`);
-    } else {
-      // si no se encuentra, agregar un nuevo contexto con el id del mensaje al que responde
-      addChatContext(
-        chatId,
-        formatChatContextText(
-          handleMessageText(message.reply_to_message).text,
-          message.reply_to_message,
-        ),
-      );
-    }
-  }
-  return formatChatContextText(text, message);
 }
 
 export function parseResponse(response) {
@@ -183,3 +235,38 @@ export function chatContextToString(contextArray, maxChars = 4000) {
 
   return result.trim();
 }
+
+// export function handleReplyChatContext(chatId, text, message) {
+//   const replyId = message.reply_to_message?.message_id;
+
+//   if (replyId) {
+//     const groupContext = getChatContext(chatId);
+
+//     const index = groupContext.findIndex((item) => {
+//       const header = item.parts[0].text.split("\n")[0]; // primera línea
+//       return (
+//         // es mensaje del modelo, tiene el .text del mensaje al que responde y el header contiene "id:undefined"
+//         item.role === "model" &&
+//         item.parts[0].text.includes(message.reply_to_message.text) &&
+//         header.includes("id:undefined")
+//       );
+//     });
+
+//     if (index !== -1) {
+//       // reemplazar el id en el header por el id del message al que responde
+//       groupContext[index].parts[0].text = groupContext[
+//         index
+//       ].parts[0].text.replace("id:undefined", `id:${replyId}`);
+//     } else {
+//       // si no se encuentra, agregar un nuevo contexto con el id del mensaje al que responde
+//       addChatContext(
+//         chatId,
+//         formatChatContextText(
+//           handleMessageText(message.reply_to_message).text,
+//           message.reply_to_message,
+//         ),
+//       );
+//     }
+//   }
+//   return formatChatContextText(text, message);
+// }
