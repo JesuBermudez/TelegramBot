@@ -12,12 +12,12 @@ import weather from "./commands/weather.js";
 import { foreignExchange } from "./commands/exchangeRate.js";
 import downloader from "./commands/ytdl.js";
 import toPdf from "./commands/toPdf.js";
-import chatContextCount from "./temp/chatContext.js";
+import chatContextCount from "./utils/chatContext.js";
+import { initChatContext } from "./utils/chatContext.js";
 import { fetchUrlAsString } from "./commands/fetchUrl.js";
 import transcription from "./commands/transcription.js";
 import resume from "./commands/resume.js";
 import singleAIPetition from "./commands/singleAIPetition.js";
-import { initChatContext } from "./utils/chatContext.js";
 
 const log = (tag, msg) =>
   console.error(`[${new Date().toISOString()}] [${tag}] ${msg}`);
