@@ -3,6 +3,8 @@ import handleMessageText from "../utils/handleMessageText.js";
 import { fetchWithRetry } from "../utils/fetchWithRetray.js";
 import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 
+const MAX_TELEGRAM_BOT_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx.update.message); // command string and text
   const messageContent = text.trim(" ").split(" ");
@@ -17,6 +19,7 @@ export default async function downloader(ctx, bot) {
   }
 
   const loadingMsg = await ctx.reply("⏳ Espere...");
+  const tempVideoPath = `src/temp/video_${Date.now()}_${msgId}.mp4`;
 
   setImmediate(async () => {
     try {
@@ -40,7 +43,22 @@ export default async function downloader(ctx, bot) {
         "⚙ Procesando...",
       );
 
-      fs.writeFileSync("src/temp/video.mp4", Buffer.from(response.data));
+      // Ensure temp directory exists
+      if (!fs.existsSync("src/temp")) {
+        fs.mkdirSync("src/temp", { recursive: true });
+      }
+
+      fs.writeFileSync(tempVideoPath, Buffer.from(response.data));
+
+      const stats = fs.statSync(tempVideoPath);
+      if (stats.size > MAX_TELEGRAM_BOT_FILE_SIZE) {
+        const sizeMb = (stats.size / (1024 * 1024)).toFixed(1);
+        await ctx.reply(
+          `⚠️ El video pesa ${sizeMb} MB y supera el límite de 50 MB permitido por Telegram para bots.`,
+          { reply_to_message_id: msgId },
+        );
+        return;
+      }
 
       // Send the video to the user
       await bot.telegram.editMessageText(
@@ -51,7 +69,7 @@ export default async function downloader(ctx, bot) {
       );
 
       await ctx.replyWithVideo(
-        { source: "src/temp/video.mp4" },
+        { source: tempVideoPath },
         {
           caption: `*${escapeMarkdownV2(ctx.update.message.from.username)}*: ${escapeMarkdownV2(
             messageContent.slice(1).join(" "),
@@ -70,6 +88,12 @@ export default async function downloader(ctx, bot) {
       if (error.code === "ECONNABORTED") {
         errorMsg =
           "⏳ El servidor tardó demasiado en responder. Intenta nuevamente.";
+      } else if (
+        error.response?.error_code === 413 ||
+        error.response?.description?.includes("Request Entity Too Large")
+      ) {
+        errorMsg =
+          "⚠️ El video supera el límite de 50 MB permitido por Telegram para bots.";
       } else if (error.response) {
         if (error.response.description) {
           errorMsg += `\nTelegram: ${error.response.error_code} ${error.response.description}`;
@@ -83,8 +107,16 @@ export default async function downloader(ctx, bot) {
           reply_to_message_id: msgId,
         });
       } catch (replyError) {}
-    }
+    } finally {
+      try {
+        if (fs.existsSync(tempVideoPath)) {
+          fs.unlinkSync(tempVideoPath);
+        }
+      } catch (cleanError) {}
 
-    await bot.telegram.deleteMessage(chatId, loadingMsg.message_id);
+      try {
+        await bot.telegram.deleteMessage(chatId, loadingMsg.message_id);
+      } catch (delError) {}
+    }
   });
 }

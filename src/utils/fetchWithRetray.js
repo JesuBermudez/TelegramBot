@@ -9,7 +9,7 @@ export async function fetchWithRetry(url, retries = 3, delay = 3000) {
     try {
       return await axios.get(url, {
         responseType: "arraybuffer",
-        timeout: 50000,
+        timeout: 120000,
       });
     } catch (error) {
       const isTimeout = error.code === "ECONNABORTED";
