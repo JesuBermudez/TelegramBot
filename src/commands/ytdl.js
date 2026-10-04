@@ -21,27 +21,30 @@ export default async function downloader(ctx, bot) {
   const loadingMsg = await ctx.reply("⏳ Espere...");
   const tempVideoPath = `src/temp/video_${Date.now()}_${msgId}.mp4`;
 
-  setImmediate(async () => {
+  // Status updates should never abort the download if Telegram rate-limits (429) or message was deleted
+  const safeEditStatus = async (statusText) => {
     try {
-      // Make the request to the downloader API
       await bot.telegram.editMessageText(
         chatId,
         loadingMsg.message_id,
         null,
-        "⏳ Descargando...",
+        statusText,
       );
+    } catch (e) {
+      // Ignore 429 rate limits or edit errors on transient status messages
+    }
+  };
+
+  setImmediate(async () => {
+    try {
+      await safeEditStatus("⏳ Descargando...");
 
       // Download the video using the downloader API
       const response = await fetchWithRetry(
-        `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${messageContent[0]}`,
+        `${process.env.DOWNLOADER_API}/api/v1/download?postUrl=${encodeURI(messageContent[0])}`,
       );
 
-      await bot.telegram.editMessageText(
-        chatId,
-        loadingMsg.message_id,
-        null,
-        "⚙ Procesando...",
-      );
+      await safeEditStatus("⚙ Procesando...");
 
       // Ensure temp directory exists
       if (!fs.existsSync("src/temp")) {
@@ -60,24 +63,39 @@ export default async function downloader(ctx, bot) {
         return;
       }
 
-      // Send the video to the user
-      await bot.telegram.editMessageText(
-        chatId,
-        loadingMsg.message_id,
-        null,
-        "📤 Enviando...",
-      );
+      await safeEditStatus("📤 Enviando...");
 
-      await ctx.replyWithVideo(
-        { source: tempVideoPath },
-        {
-          caption: `*${escapeMarkdownV2(ctx.update.message.from.username)}*: ${escapeMarkdownV2(
-            messageContent.slice(1).join(" "),
-          )}`,
-          parse_mode: "MarkdownV2",
-          supports_streaming: true,
-        },
-      );
+      const fromUser = ctx.update.message.from;
+      const username = fromUser.username
+        ? `@${fromUser.username}`
+        : [fromUser.first_name, fromUser.last_name].filter(Boolean).join(" ") ||
+          "Usuario";
+      const userText = messageContent.slice(1).join(" ").trim();
+
+      const captionMarkdown = userText
+        ? `*${escapeMarkdownV2(username)}*: ${escapeMarkdownV2(userText)}`
+        : `*${escapeMarkdownV2(username)}*`;
+
+      try {
+        await ctx.replyWithVideo(
+          { source: tempVideoPath },
+          {
+            caption: captionMarkdown,
+            parse_mode: "MarkdownV2",
+            supports_streaming: true,
+          },
+        );
+      } catch (videoError) {
+        // Fallback without parse_mode if MarkdownV2 entity parsing failed
+        const plainCaption = userText ? `${username}: ${userText}` : username;
+        await ctx.replyWithVideo(
+          { source: tempVideoPath },
+          {
+            caption: plainCaption,
+            supports_streaming: true,
+          },
+        );
+      }
 
       try {
         await bot.telegram.deleteMessage(chatId, msgId);
@@ -94,12 +112,23 @@ export default async function downloader(ctx, bot) {
       ) {
         errorMsg =
           "⚠️ El video supera el límite de 50 MB permitido por Telegram para bots.";
-      } else if (error.response) {
-        if (error.response.description) {
-          errorMsg += `\nTelegram: ${error.response.error_code} ${error.response.description}`;
-        } else {
-          errorMsg += `\nServidor: ${error.response.status} ${error.response.statusText}`;
+      } else if (error.response?.data) {
+        let serverError = "";
+        try {
+          const raw = Buffer.from(error.response.data).toString("utf-8");
+          const json = JSON.parse(raw);
+          if (json.error) serverError = json.error;
+        } catch {}
+
+        if (serverError) {
+          errorMsg += `\nServidor: ${serverError}`;
+        } else if (error.response.status) {
+          errorMsg += `\nServidor: ${error.response.status} ${error.response.statusText || ""}`.trim();
         }
+      } else if (error.response?.description) {
+        errorMsg += `\nTelegram: ${error.response.error_code} ${error.response.description}`;
+      } else if (error.message) {
+        errorMsg += `\nDetalle: ${error.message}`;
       }
 
       try {
