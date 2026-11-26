@@ -6,6 +6,12 @@ import { escapeMarkdownV2 } from "../utils/escapeMarkdownV2.js";
 export default async function downloader(ctx, bot) {
   const { text } = handleMessageText(ctx.update.message); // command string and text
   const messageContent = text.trim(" ").split(" ");
+  console.log("[DEBUG /get]", {
+    rawText: ctx.update.message.text,
+    parsedText: text,
+    messageContent,
+    firstLength: messageContent[0]?.length,
+  });
   const chatId = ctx.update.message.chat.id;
   const msgId = ctx.update.message.message_id;
 

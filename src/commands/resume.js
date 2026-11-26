@@ -95,14 +95,14 @@ export default async function resume(ctx) {
     reply_to_message_id: msgId,
   });
 
+  const primaryModel = process.env.GEMINI_3_6_FLASH || "gemini-3.6-flash";
+  const fallbackModel = process.env.GEMINI_3_5_FLASH_LITE || "gemini-3.5-flash-lite";
+
   try {
-    let result;
+    let contents;
 
     if (target.kind === "text") {
-      result = await genAI.models.generateContent({
-        model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-        contents: [{ text: `${INSTRUCTION}\n\nTexto:\n${target.text}` }],
-      });
+      contents = [{ text: `${INSTRUCTION}\n\nTexto:\n${target.text}` }];
     } else {
       // descarga el archivo (imagen, audio, video o documento) desde Telegram
       const fileLink = await ctx.telegram.getFileLink(target.fileId);
@@ -122,12 +122,26 @@ export default async function resume(ctx) {
 
       const base64Data = Buffer.from(fileResponse.data).toString("base64");
 
+      contents = [
+        { inlineData: { data: base64Data, mimeType: target.mimeType } },
+        { text: INSTRUCTION },
+      ];
+    }
+
+    let result;
+    try {
       result = await genAI.models.generateContent({
-        model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-        contents: [
-          { inlineData: { data: base64Data, mimeType: target.mimeType } },
-          { text: INSTRUCTION },
-        ],
+        model: primaryModel,
+        contents,
+      });
+    } catch (primaryError) {
+      console.log(
+        `Error con ${primaryModel} en /resume, intentando con ${fallbackModel}:`,
+        primaryError.response?.data || primaryError.message,
+      );
+      result = await genAI.models.generateContent({
+        model: fallbackModel,
+        contents,
       });
     }
 
