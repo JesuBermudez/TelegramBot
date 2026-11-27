@@ -52,7 +52,7 @@ await initChatContext();
 // Un error en un handler NUNCA debe matar el proceso
 bot.catch((err, ctx) => {
   const desc = ctx?.updateType ?? "update";
-  log("handler", `Error en ${desc}: ${err.message ?? err}`);
+  log("handler", `Error aquí en ${desc}: ${err.message ?? err}`);
 });
 
 // Promesas rechazadas / excepciones no capturadas: log, no morir
