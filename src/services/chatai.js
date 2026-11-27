@@ -29,13 +29,31 @@ export default async function chatai(ctx, bot, txt) {
     { role: "user", parts: [{ text: txt }] },
   ];
 
+  const primaryModel =
+    process.env.GEMINI_2_5_FLASH_LITE || "gemini-2.5-flash-lite";
+  const fallbackModel =
+    process.env.GEMINI_3_5_FLASH_LITE || "gemini-3.5-flash-lite";
+
   // request to the AI API
   try {
-    const result = await genAI.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      store: false,
-      contents: history,
-    });
+    let result;
+    try {
+      result = await genAI.models.generateContent({
+        model: primaryModel,
+        store: false,
+        contents: history,
+      });
+    } catch (primaryError) {
+      console.log(
+        `Error con ${primaryModel} en ChatAI, intentando con ${fallbackModel}:`,
+        primaryError.response?.data || primaryError.message,
+      );
+      result = await genAI.models.generateContent({
+        model: fallbackModel,
+        store: false,
+        contents: history,
+      });
+    }
 
     const response = result.text.trim();
     const { replyId, reaction, body } = parseResponse(response);

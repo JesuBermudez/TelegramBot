@@ -30,6 +30,11 @@ export default async function transcription(ctx) {
     reply_to_message_id: msgId,
   });
 
+  const primaryModel =
+    process.env.GEMINI_3_6_FLASH || "gemini-3.6-flash";
+  const fallbackModel =
+    process.env.GEMINI_3_5_FLASH_LITE || "gemini-3.5-flash-liteh";
+
   try {
     // descarga el archivo de audio desde Telegram
     const fileLink = await ctx.telegram.getFileLink(fileId);
@@ -38,21 +43,34 @@ export default async function transcription(ctx) {
     });
     const base64Audio = Buffer.from(fileResponse.data).toString("base64");
 
-    // envia el audio a Gemini para transcribirlo
-    const result = await genAI.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-      contents: [
-        {
-          inlineData: {
-            data: base64Audio,
-            mimeType,
-          },
+    const contents = [
+      {
+        inlineData: {
+          data: base64Audio,
+          mimeType,
         },
-        {
-          text: "Transcribe el audio completo de forma literal, en el idioma original. No agregues comentarios, resúmenes ni notas adicionales, solo el texto transcrito.",
-        },
-      ],
-    });
+      },
+      {
+        text: "Transcribe el audio completo de forma literal, en el idioma original. No agregues comentarios, resúmenes ni notas adicionales, solo el texto transcrito.",
+      },
+    ];
+
+    let result;
+    try {
+      result = await genAI.models.generateContent({
+        model: primaryModel,
+        contents,
+      });
+    } catch (primaryError) {
+      console.log(
+        `Error con ${primaryModel} en /tran, intentando con ${fallbackModel}:`,
+        primaryError.response?.data || primaryError.message,
+      );
+      result = await genAI.models.generateContent({
+        model: fallbackModel,
+        contents,
+      });
+    }
 
     const text = result.text.trim();
 

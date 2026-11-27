@@ -33,13 +33,30 @@ export default async function singleIAPetition(ctx) {
     reply_to_message_id: msgId,
   });
 
+  const primaryModel = process.env.GEMINI_3_6_FLASH || "gemini-3.6-flash";
+  const fallbackModel = process.env.GEMINI_3_5_FLASH_LITE || "gemini-3.5-flash-lite";
+
   try {
-    const result = await genAI.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.6-flash",
-      contents: [
-        { role: "user", parts: [{ text: `${INSTRUCTION}${prompt}` }] },
-      ],
-    });
+    const contents = [
+      { role: "user", parts: [{ text: `${INSTRUCTION}${prompt}` }] },
+    ];
+
+    let result;
+    try {
+      result = await genAI.models.generateContent({
+        model: primaryModel,
+        contents,
+      });
+    } catch (primaryError) {
+      console.log(
+        `Error con ${primaryModel} en /ask, intentando con ${fallbackModel}:`,
+        primaryError.response?.data || primaryError.message,
+      );
+      result = await genAI.models.generateContent({
+        model: fallbackModel,
+        contents,
+      });
+    }
 
     const answer = result.text.trim();
 
@@ -58,7 +75,7 @@ export default async function singleIAPetition(ctx) {
       reply_to_message_id: msgId,
     });
   } catch (error) {
-    console.log("Error en /ia:", error.response?.data || error.message);
+    console.log("Error en /ask:", error.response?.data || error.message);
 
     try {
       await ctx.telegram.deleteMessage(message.chat.id, loadingMsg.message_id);
